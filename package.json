@@ -1,0 +1,29 @@
+{
+	"name": "jquery.fileapi",
+	"version": "0.1.0",
+	"devDependencies": {
+		"grunt": "~0.4.0",
+		"grunt-contrib-jshint": "~0.2.0",
+		"grunt-contrib-uglify": "~0.1"
+	},
+	"description": "jquery.fileapi",
+	"main": "jquery.fileapi.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/rubaxa/jquery.fileapi.git"
+	},
+	"keywords": [
+		"FileAPI",
+		"upload",
+		"file",
+		"html5",
+		"chunked",
+		"jquery",
+		"plugin"
+	],
+	"author": "Konstantin Lebedev <ibnRubaXa@gmail.com>",
+	"license": "MIT"
+}
