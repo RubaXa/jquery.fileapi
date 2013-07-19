@@ -389,7 +389,7 @@
 
 			if( deg || crop ){
 				var trans = opts.imageTransform = opts.imageTransform || {};
-				if( $.isEmptyObject(trans) || parseInt(trans.maxWidth || trans.minWidth || trans.width, 10) > 0 || trans.type || trans.quality ){
+				if( $.isEmptyObject(trans) || _isOriginTransform(trans) ){
 					trans.crop		= crop;
 					trans.rotate	= deg;
 				}
@@ -852,6 +852,19 @@
 			;
 		}
 	};
+
+
+	function _isOriginTransform(trans){
+		var key;
+		for( key in trans ){
+			if( trans.hasOwnProperty(key) ){
+				if( !(trans[key] instanceof Object || key === 'overlay') ){
+					return	true;
+				}
+			}
+		}
+		return	false;
+	}
 
 
 
