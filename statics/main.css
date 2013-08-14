@@ -259,16 +259,15 @@ h2 {
 	}
 
 	.btn input {
-		left: 0;
-		right: 0;
-		bottom: 0;
+	 	top: -10px;
+		right: -40px;
+		z-index: 2;
+		position: absolute;
 		cursor: pointer;
 		opacity: 0;
 		filter: alpha(opacity=0);
-		-webkit-transform: scale(3);
-		-moz-transform: scale(3);
-		transform: scale(3);
-		position: absolute;
+		font-size: 50px;
+		cursor: pointer;
 	}
 
 	.btn-txt {
