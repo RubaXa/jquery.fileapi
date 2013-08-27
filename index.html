@@ -111,7 +111,7 @@
 									width: 200,
 									height: 200
 								},
-								progress: '.js-progress-bar'
+								progress: '.js-progress'
 							},
 							onSelect: function (evt, ui){
 								var file = ui.files[0];
@@ -122,7 +122,7 @@
 										closeOnOverlayClick: false,
 										onOpen: function (overlay){
 											$(overlay).on('click', '.js-upload', function (){
-												$('#popup').modal().close();
+												$.modal().close();
 												$('#userpic').fileapi('upload');
 											});
 
@@ -131,6 +131,7 @@
 												bgColor: '#fff',
 												maxSize: [$(window).width()-100, $(window).height()-100],
 												minSize: [200, 200],
+												selection: '90%',
 												aspectRatio: 1,
 												onSelect: function (coords){
 													$('#userpic').fileapi('crop', file, coords);
@@ -140,6 +141,70 @@
 									}).open();
 								}
 							}
+						});
+					});
+				</script>
+			</div>
+
+			<div class="example">
+				<div class="example__left" style="padding-top:120px">
+					<div id="webcam" class="webcam">
+						<div class="js-preview webcam__preview"></div>
+						<div class="btn btn-success">
+							<div class="js-webcam">
+								<span class="btn-txt">Webcam</span>
+							</div>
+							<div class="js-upload" style="display: none;">
+								<div class="progress progress-success"><div class="js-progress bar"></div></div>
+								<span class="btn-txt">Uploading</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="example__right">
+					<h2><span>Webcam</span></h2>
+				</div>
+
+				<script>
+					examples.push(function (){
+						$('#webcam').fileapi({
+							url: 'http://rubaxa.org/FileAPI/server/ctrl.php',
+							accept: 'image/*',
+							autoUpload: true,
+							elements: {
+								active: { show: '.js-upload', hide: '.js-webcam' },
+								preview: {
+									el: '.js-preview',
+									width: 200,
+									height: 200
+								},
+								progress: '.js-progress'
+							}
+						});
+
+						$('.js-webcam', '#webcam').click(function (evt){
+							var modal = $('#popup').modal({
+								closeOnOverlayClick: false,
+								onOpen: function (overlay){
+									$('.js-img', overlay).webcam({
+										width: 320,
+										height: 240,
+										success: function (webcam){
+											$(overlay).on('click', '.js-upload', function (){
+												$('#webcam').fileapi('add', webcam.shot());
+												modal.close();
+											});
+										}
+									});
+								},
+								onClose: function (overlay){
+									$('.js-img', overlay).webcam('destroy');
+								}
+							});
+
+							modal.open();
+							evt.preventDefault();
 						});
 					});
 				</script>
@@ -314,6 +379,7 @@
 		};
 	</script>
 	<script src="./FileAPI/FileAPI.min.js"></script>
+	<script src="./FileAPI/FileAPI.exif.js"></script>
 	<script src="./jquery.fileapi.js"></script>
 	<script src="./jcrop/jquery.Jcrop.min.js"></script>
 	<script src="./statics/jquery.modal.js"></script>

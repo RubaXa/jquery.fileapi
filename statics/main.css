@@ -310,6 +310,7 @@ h2 {
 
 
 
+.webcam,
 .userpic {
 	width: 200px;
 	height: 200px;
@@ -319,13 +320,21 @@ h2 {
 	background: url('http://expomap.ru/images/users/no-userpic-big.gif') no-repeat;
 	background-size: cover;
 }
+	.webcam .btn,
 	.userpic .btn {
 		margin-top: 150px;
 	}
 
+	.webcam__preview,
 	.userpic__preview {
 		position: absolute;
 	}
+
+.webcam {
+	background-size: auto;
+	background-image: url('https://cdn1.iconfinder.com/data/icons/windows-8-metro-style/128/integrated_webcam.png');
+	background-position: center 10px;
+}
 
 
 .b-upload {

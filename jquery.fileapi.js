@@ -53,6 +53,7 @@
 			sizeFormat: '0.00',
 
 			imageTransform: 0,
+			imageAutoOrientation: !!FileAPI.support.exif,
 
 			elements: {
 				ctrl: {
@@ -586,6 +587,8 @@
 		 * @param  {Array}  files
 		 */
 		add: function (files){
+			files = [].concat(files);
+
 			if( files.length ){
 				var
 					  opts = this.options
@@ -793,7 +796,7 @@
 
 						if( this.__cropFile !== file ){
 							this.__cropFile = file;
-							api.Image(file).get(function (err, img){
+							api.Image(file).rotate(opts.imageAutoOrientation ? 'auto' : 0).get(function (err, img){
 								$el.find('>div>div').html($(img).width('100%').height('100%'));
 							}, 'exactFit');
 						}
@@ -927,6 +930,45 @@
 	};
 
 
+	/**
+	 * FileAPI.Camera wrapper
+	 * @param  {Object|String}  options
+	 * @returns {jQuery}
+	 */
+	$.fn.webcam = function (options){
+		var el = this, ret = el, $el = $(el), key = 'fileapi-camera', inst = $el.data(key);
+
+		if( inst === true ){
+			api.log("[webcam.warn] not ready.");
+			ret = null;
+		}
+		else if( options === 'widget' ){
+			ret	= inst;
+		}
+		else if( options === 'destroy' ){
+			inst.stop();
+			$el.empty();
+		}
+		else if( inst ){
+			ret	= inst[options]();
+		}
+		else if( inst === false ){
+			api.log("[webcam.error] вoes not work.");
+			ret = null;
+		}
+		else {
+			$el.data(key, true);
+			options = $.extend({ success: noop, error: noop }, options);
+
+			FileAPI.Camera.publish($el, options, function (err, cam){
+				$el.data(key, err ? false : cam);
+				options[err ? 'error' : 'success'].call(el, err || cam);
+			});
+		}
+
+		return	ret;
+	};
+
 
 	/**
 	 * Wrapper for JCrop
@@ -945,8 +987,29 @@
 					Image.resize(opts.maxSize[0], opts.maxSize[1], 'max');
 				}
 
-				Image.get(function (err, img){
-					opts.setSelect = opts.setSelect || [0, 0, img.width, img.height];
+				Image.rotate('auto').get(function (err, img){
+					var
+						  selection = opts.selection
+						, minSide = Math.min(img.width, img.height)
+
+						, selWidth = minSide
+						, selHeight = minSide / (opts.aspectRatio || 1)
+					;
+
+					if( selection ){
+						if( /%/.test(selection) || (selection > 0 && selection < 1) ){
+							selection	 = parseFloat(selection, 10) / (selection > 0 ? 1 : 100);
+							selWidth	*= selection;
+							selHeight	*= selection;
+						}
+
+						var
+							  selLeft = (img.width - selWidth)/2
+							, selTop = (img.height - selHeight)/2
+						;
+
+						opts.setSelect = [selLeft|0, selTop|0, (selLeft + selWidth)|0, (selTop + selHeight)|0];
+					}
 
 					api.each(['onSelect', 'onChange'], function (name, fn){
 						if( fn = opts[name] ){

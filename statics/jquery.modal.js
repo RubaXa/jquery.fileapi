@@ -100,15 +100,15 @@
 				var overlay = $('.' + localOptions.overlayClass);
 				$.extend(localOptions, overlay.data(pluginNamespace+'.options'));
 
+				if(localOptions.onClose) {
+					localOptions.onClose(overlay, localOptions);
+				}
+
 				overlay.remove();
 				unlockContainer();
 
 				if(localOptions.closeOnEsc) {
 					$(document).unbind('keyup.'+pluginNamespace);
-				}
-
-				if(localOptions.onClose) {
-					localOptions.onClose(overlay, localOptions);
 				}
 			}
 		};
