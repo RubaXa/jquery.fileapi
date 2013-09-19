@@ -263,11 +263,11 @@
 		},
 
 		_onSelect: function (evt){
-			this._getFiles(evt, _bind(function (data){
+			this._getFiles(evt, _bind(this, function (data){
 				if( data.all.length && this.emit('select', data) !== false ){
 					this.add(data.files);
 				}
-			}, this));
+			}));
 		},
 
 		_onActionClick: function (evt){
@@ -790,7 +790,7 @@
 			;
 
 			if( $el.length ){
-				api.getInfo(file, _bind(function (err, info){
+				api.getInfo(file, _bind(this, function (err, info){
 					if( !err ){
 						// @todo error emit
 						if( !$el.find('div>div').length ){
@@ -818,7 +818,7 @@
 							, marginTop:	-Math.round(ry * coords.y)
 						});
 					}
-				}, this));
+				}));
 			}
 
 			this._crop[uid] = coords;
