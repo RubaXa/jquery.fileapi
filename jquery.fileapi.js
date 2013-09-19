@@ -15,12 +15,19 @@
 
 		, _dataAttr = 'data-fileapi'
 		, _dataFileId = 'data-fileapi-id'
+		, _slice	= [].slice
+		, _bind		= function (ctx, fn) {
+			var args = _slice.call(arguments, 2);
+			return	fn.bind ? fn.bind.apply(fn, [ctx].concat(args)) : function (){
+				return fn.apply(ctx, args.concat(_slice.call(arguments)));
+			};
+		}
 	;
 
 
 
 	var Plugin = function (el, options){
-		this.$el = el = $(el).on('change.fileapi', $.proxy(this, '_onSelect'));
+		this.$el = el = $(el).on('change.fileapi', _bind(this, this._onSelect));
 		this.el  = el[0];
 
 		this._options = {}; // previous options
@@ -132,11 +139,11 @@
 
 
 		this.$el
-			.on('reset.fileapi', $.proxy(this, '_onReset'))
-			.on('submit.fileapi', $.proxy(this, '_onSubmit'))
-			.on('upload.fileapi progress.fileapi complete.fileapi', $.proxy(this, '_onUploadEvent'))
-			.on('fileupload.fileapi fileprogress.fileapi filecomplete.fileapi', $.proxy(this, '_onFileUploadEvent'))
-			.on('click', '['+_dataAttr+']', $.proxy(this, '_onActionClick'))
+			.on('reset.fileapi', _bind(this, this._onReset))
+			.on('submit.fileapi', _bind(this, this._onSubmit))
+			.on('upload.fileapi progress.fileapi complete.fileapi', _bind(this, this._onUploadEvent))
+			.on('fileupload.fileapi fileprogress.fileapi filecomplete.fileapi', _bind(this, this._onFileUploadEvent))
+			.on('click', '['+_dataAttr+']', _bind(this, this._onActionClick))
 		;
 
 
@@ -144,14 +151,14 @@
 		var ctrl = options.elements.ctrl;
 		if( ctrl ){
 			if( ctrl.reset ){
-				this.$el.on('click.fileapi', ctrl.reset, $.proxy(this, '_onReset'));
+				this.$el.on('click.fileapi', ctrl.reset, _bind(this, this._onReset));
 			}
 			if( ctrl.upload ){
-				this.$el.on('click.fileapi', ctrl.upload, $.proxy(this, '_onSubmit'));
+				this.$el.on('click.fileapi', ctrl.upload, _bind(this, this._onSubmit));
 			}
 		}
 
-		this.elem('dnd.el', true).dnd($.proxy(this, '_onDropHover'), $.proxy(this, '_onDrop'));
+		this.elem('dnd.el', true).dnd(_bind(this, this._onDropHover), _bind(this, this._onDrop));
 		this.$progress = this.elem('progress');
 
 		this._crop		= {};
@@ -256,7 +263,7 @@
 		},
 
 		_onSelect: function (evt){
-			this._getFiles(evt, $.proxy(function (data){
+			this._getFiles(evt, _bind(function (data){
 				if( data.all.length && this.emit('select', data) !== false ){
 					this.add(data.files);
 				}
@@ -754,7 +761,7 @@
 						, files: files
 						, chunkSize: opts.chunkSize|0
 						, chunkUploadRetry: opts.chunkUploadRetry|0
-						, prepare: $.proxy(this, '_onFileUploadPrepare')
+						, prepare: _bind(this, this._onFileUploadPrepare)
 						, imageTransform: opts.imageTransform
 					}
 				;
@@ -764,8 +771,8 @@
 
 				// Add event listeners
 				api.each(['upload', 'progress', 'complete'], function (name){
-					uploadOpts[name] = $.proxy(this, $.camelCase('_emit-'+name+'Event'), '');
-					uploadOpts['file'+name] = $.proxy(this, $.camelCase('_emit-'+name+'Event'), 'file');
+					uploadOpts[name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], '');
+					uploadOpts['file'+name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], 'file');
 				}, this);
 
 				// Start uploading
@@ -783,7 +790,7 @@
 			;
 
 			if( $el.length ){
-				api.getInfo(file, $.proxy(function (err, info){
+				api.getInfo(file, _bind(function (err, info){
 					if( !err ){
 						// @todo error emit
 						if( !$el.find('div>div').length ){
