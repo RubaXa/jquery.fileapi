@@ -218,6 +218,8 @@ $('#userpic').fileapi({
 ```
 
 
+---
+
 
 ## MIT LICENSE
 Copyright 2013 Lebedev Konstantin <ibnRubaXa@gmail.com>
@@ -241,3 +243,15 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+---
+
+
+## Changelog
+ * + `resetOnSelect` option, default `!multiple`
+ * fix $.fn.cropper reinit
+
+
+### 0.1.0
+ * Inital commit

@@ -42,6 +42,7 @@
 			sortFn: 0,
 			filterFn: 0,
 			autoUpload: false,
+			resetOnSelect: void 0,
 
 			lang: {
 				  B:	'bytes'
@@ -160,6 +161,10 @@
 		this.files		= []; // all files
 		this.uploaded	= []; // uploaded files
 
+		if( options.resetOnSelect === void 0 ){
+			options.resetOnSelect = !options.multiple;
+		}
+
 		this.clear();
 	};
 
@@ -258,7 +263,7 @@
 		_onSelect: function (evt){
 			this._getFiles(evt, $.proxy(function (data){
 				if( data.all.length && this.emit('select', data) !== false ){
-					this.add(data.files);
+					this.add(data.files, this.options.resetOnSelect);
 				}
 			}, this));
 		},
@@ -584,9 +589,10 @@
 
 		/**
 		 * Add files to queue
-		 * @param  {Array}  files
+		 * @param  {Array}    files
+		 * @param  {Boolean}  [reset]
 		 */
-		add: function (files){
+		add: function (files, reset){
 			files = [].concat(files);
 
 			if( files.length ){
@@ -610,8 +616,8 @@
 					this.xhr.append(files);
 				}
 
-				this.queue = this.queue.concat(files);
-				this.files = this.files.concat(files);
+				this.queue = reset ? files : this.queue.concat(files);
+				this.files = reset ? files : this.files.concat(files);
 
 				if( this.options.autoUpload ){
 					this.upload();
@@ -977,7 +983,7 @@
 		var $el = this, file = opts.file;
 
 		if( typeof opts === 'string' ){
-			$el.Jcrop.apply($el, arguments);
+			$el.first().Jcrop.apply($el, arguments);
 		}
 		else {
 			api.getInfo(file, function (err, info){
@@ -1025,13 +1031,9 @@
 						}
 					});
 
-					$el
-						.css('lineHeight', 0)
-						.html( $(img).css('margin', 0) )
-						.trigger('resize')
-						.Jcrop('destroy')
-						.Jcrop(opts)
-					;
+					var $inner = $('<div/>').css('lineHeight', 0).append( $(img).css('margin', 0) );
+					$el.html($inner);
+					$inner.Jcrop(opts);
 				});
 			});
 		}
