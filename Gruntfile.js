@@ -30,13 +30,17 @@ module.exports = function (grunt){
 			}
 		},
 
+		version: {
+			src: '<%= pkg.name %>.js'
+		},
+
 		uglify: {
 			options: {
 				banner: '/*! <%= pkg.name %> <%= pkg.version %> - <%= pkg.license %> | <%= pkg.repository.url %> */\n'
 			},
 			dist: {
 				files: {
-					'./<%= pkg.name %>.min.js': ['<%= pkg.main %>']
+					'<%= pkg.name %>.min.js': ['<%= pkg.main %>']
 				}
 			}
 		}
@@ -44,14 +48,14 @@ module.exports = function (grunt){
 
 
 	// These plugins provide necessary tasks.
+	grunt.loadNpmTasks('grunt-version');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
-
 
 	// "npm test" runs these tasks
 	grunt.registerTask('test', ['jshint']);
 
 
 	// Default task.
-	grunt.registerTask('default', ['test', 'uglify']);
+	grunt.registerTask('default', ['test', 'version', 'uglify']);
 };

@@ -3,8 +3,9 @@
 	"version": "0.1.1",
 	"devDependencies": {
 		"grunt": "~0.4.0",
+		"grunt-version": "*",
 		"grunt-contrib-jshint": "~0.2.0",
-		"grunt-contrib-uglify": "~0.1"
+		"grunt-contrib-uglify": "*"
 	},
 	"description": "jquery.fileapi",
 	"main": "jquery.fileapi.js",
