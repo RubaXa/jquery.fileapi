@@ -249,6 +249,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+## 0.1.1
  * + `resetOnSelect` option, default `!multiple`
  * fix $.fn.cropper reinit
 
