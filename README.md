@@ -177,6 +177,43 @@ elements: {
 }
 ```
 
+---
+
+## Events
+### onSelect`:Function`(evt`:$.Event`, data`:FilesObject`)
+Retrieve file List, takes two arguments.
+
+### onUpload`:Function`(evt`:$.Event`, xhr`:Object`, options`:Object`)
+Start uploading.
+
+### onFileUpload`:Function`(evt`:$.Event`, file`:Object`, xhr`:Object`, options`:Object`)
+Start upload the same file.
+
+### onProgress`:Function`(evt`:$.Event`, uiEvt`:ProgressEvent`, file`:Object`, xhr`:Object`, options`:Object`)
+Common uploading progress.
+
+### onFileProgress`:Function`(evt`:$.Event`, uiEvt`:ProgressEvent`, file`:Object`, xhr`:Object`, options`:Object`)
+Progress upload the same file.
+
+### onComplete`:Function`(evt`:$.Event`, err`:String|Null`, xhr`:Object`, file`:Object`, options`:Object`)
+Completion of the entire uploading.
+
+### onFileComplete`:Function`(evt`:$.Event`, err`:String|Null`, xhr`:Object`, file`:Object`, options`:Object`)
+Completion of uploading the file.
+
+### onDrop`:Function`(evt`:$.Event`, data`:FilesObject`)
+Retrieve file List, takes two arguments.
+
+### onDropHover`:Function`(evt`:$.Event`, uiEvt`:Object`)
+```js
+$('#box').fileapi({
+	onDropHover: function (evt, uiEvt){
+		$(this).toggleClass('dnd_hover', uiEvt.state);
+	}
+});
+```
+
+
 
 ## Cropper
 Based on [Jсrop](http://deepliquid.com/content/Jcrop.html).
