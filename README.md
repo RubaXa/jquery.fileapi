@@ -1,5 +1,5 @@
 # $.fn.fileapi
-jQuery plugin for FileAPI
+jQuery plugin for FileAPI (multiupload, image upload, crop, resize and etc.)
 
 
 ## Install

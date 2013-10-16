@@ -7,7 +7,7 @@
 		"grunt-contrib-jshint": "~0.2.0",
 		"grunt-contrib-uglify": "*"
 	},
-	"description": "jquery.fileapi",
+	"description": "jQuery plugin for FileAPI (multiupload, image upload, crop, resize and etc.)",
 	"main": "jquery.fileapi.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
@@ -19,6 +19,7 @@
 	"keywords": [
 		"FileAPI",
 		"upload",
+		"multiupload",
 		"file",
 		"html5",
 		"chunked",

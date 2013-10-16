@@ -31,7 +31,7 @@ module.exports = function (grunt){
 		},
 
 		version: {
-			src: '<%= pkg.name %>.js'
+			src: ['<%= pkg.name %>.js', 'bower.json']
 		},
 
 		uglify: {
