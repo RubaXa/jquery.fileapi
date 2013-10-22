@@ -150,7 +150,7 @@ elements: {
 	progress: '[data-fileapi="progress"]',
 	// Filelist options
 	file: {
-		// Teamplte
+		// Template
 		tpl: '[data-fileapi="file.tpl"]',
 		// Progress bar
 		progress: '[data-fileapi="file.progress"]',
