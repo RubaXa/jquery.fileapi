@@ -917,7 +917,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.1.1';
+	$.fn.fileapi.version = '0.1.2';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
@@ -1040,7 +1040,7 @@
 
 					var $inner = $('<div/>').css('lineHeight', 0).append( $(img).css('margin', 0) );
 					$el.html($inner);
-					$inner.Jcrop(opts);
+					$inner.Jcrop(opts).trigger('resize');
 				});
 			});
 		}
