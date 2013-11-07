@@ -101,7 +101,8 @@
 				},
 				dnd: {
 					el: '[data-fileapi="dnd"]',
-					hover: 'dnd_hover'
+					hover: 'dnd_hover',
+					fallback: '[data-filapi="dnd.fallback"]'
 				}
 			},
 
@@ -159,7 +160,16 @@
 			}
 		}
 
-		this.elem('dnd.el', true).dnd(_bind(this, this._onDropHover), _bind(this, this._onDrop));
+		// Drag'n'Drop
+		var dnd = FileAPI.support.dnd;
+		this.elem('dnd.el', true).toggle(dnd);
+		this.elem('dnd.fallback').toggle(!dnd);
+
+		if( dnd ){
+			this.elem('dnd.el', true).dnd(_bind(this, this._onDropHover), _bind(this, this._onDrop));
+		}
+
+
 		this.$progress = this.elem('progress');
 
 		this._crop		= {};
@@ -917,7 +927,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.1.2';
+	$.fn.fileapi.version = '0.1.3';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";

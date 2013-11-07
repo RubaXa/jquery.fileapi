@@ -311,6 +311,13 @@
 				<div class="example__left" style="padding-top:100px;">
 					<div id="dnd" class="b-upload b-upload_dnd">
 						<div class="b-upload__dnd">Drag and drop, automatic upload</div>
+						<div class="b-upload__dnd-not-supported">
+							<div class="btn btn-success js-fileapi-wrapper">
+								<span>Choose files</span>
+								<input type="file" name="filedata" multiple />
+							</div>
+						</div>
+
 						<div class="js-files b-upload__files">
 							<div class="js-file-tpl b-thumb" data-id="<%=uid%>" title="<%-name%>, <%-sizeText%>">
 								<div class="b-thumb__preview">
@@ -346,7 +353,8 @@
 								},
 								dnd: {
 									el: '.b-upload__dnd',
-									hover: 'b-upload__dnd_hover'
+									hover: 'b-upload__dnd_hover',
+									fallback: '.b-upload__dnd-not-supported'
 								}
 							}
 						});
