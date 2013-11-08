@@ -190,6 +190,9 @@
 									$('.js-img', overlay).webcam({
 										width: 320,
 										height: 240,
+										error: function (){
+											alert("Unfortunately, your browser does not support webcam.");
+										},
 										success: function (webcam){
 											$(overlay).on('click', '.js-upload', function (){
 												$('#webcam').fileapi('add', webcam.shot());
@@ -383,6 +386,7 @@
 	<script>
 		var FileAPI = {
 			  debug: true
+			, media: true
 			, staticPath: './FileAPI/'
 		};
 	</script>
@@ -407,9 +411,13 @@
 				.click(function (){
 					$(this).off();
 
+					if( !FileAPI.support.media ){
+						$blind.animate({ top: -$(this).height() }, 'slow', 'easeOutQuart');
+					}
+
 					FileAPI.Camera.publish($('.splash__cam'), function (err, cam){
 						if( err ){
-							alert('Не удалось получить доступ к камере.');
+							alert("Unfortunately, your browser does not support webcam.");
 						} else {
 							$blind.animate({ top: -$(this).height() }, 'slow', 'easeOutQuart');
 						}

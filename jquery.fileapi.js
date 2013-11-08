@@ -172,12 +172,6 @@
 
 		this.$progress = this.elem('progress');
 
-		this._crop		= {};
-		this._rotate	= {}; // rotate deg
-
-		this.files		= []; // all files
-		this.uploaded	= []; // uploaded files
-
 		if( options.resetOnSelect === void 0 ){
 			options.resetOnSelect = !options.multiple;
 		}
@@ -384,12 +378,14 @@
 				$progress.stop().animate({ width: ui.loaded/ui.total*100 + '%' }, 300);
 			}
 			else if( type == 'upload' ){
+				// Начало загрузки
 				$progress.width(0);
 			}
 			else {
+				// Завершение загрузки
 				var fn = function (){
 					$progress.dequeue();
-					_this.clear();
+					_this.dequeue();
 				};
 
 				this.xhr = null;
@@ -863,6 +859,18 @@
 		},
 
 		clear: function (){
+			this._crop		= {};
+			this._rotate	= {}; // rotate deg
+
+			this.queue		= [];
+			this.files		= []; // all files
+			this.uploaded	= []; // uploaded files
+
+			this.$files.empty();
+			this._redraw();
+		},
+
+		dequeue: function (){
 			this.queue = [];
 			this._redraw();
 		},
@@ -927,7 +935,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.1.3';
+	$.fn.fileapi.version = '0.1.4';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
