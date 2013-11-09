@@ -61,6 +61,10 @@ To enable automatic uploads, set this option to `true`.
 Additional form data to be sent along with the file uploads can be set using this option.
 
 
+### headers`:Object`
+Additional request headers.
+
+
 ### multiple`:Boolean`
 It specifies that multiple files can be selected at once, default `true`.
 
@@ -286,6 +290,12 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+## 0.1.4
+ * + `headers:Object`
+ * + `queue()`; * `clear()`;
+ * `clearOnComplete: false`
+ * * `resetOnSelect` -> `clearOnSelect`
+
 ## 0.1.1
  * + `resetOnSelect` option, default `!multiple`
  * fix $.fn.cropper reinit

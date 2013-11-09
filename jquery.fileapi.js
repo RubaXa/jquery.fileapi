@@ -22,6 +22,9 @@
 				return fn.apply(ctx, args.concat(_slice.call(arguments)));
 			};
 		}
+		, _optDataAttr = function (name){
+			return '['+_dataAttr+'="'+name+'"]';
+		}
 	;
 
 
@@ -49,7 +52,9 @@
 			sortFn: 0,
 			filterFn: 0,
 			autoUpload: false,
-			resetOnSelect: void 0,
+
+			clearOnSelect: void 0,
+			clearOnComplete: void 0,
 
 			lang: {
 				  B:	'bytes'
@@ -65,31 +70,31 @@
 
 			elements: {
 				ctrl: {
-					upload: '[data-fileapi="ctrl.upload"]',
-					reset: '[data-fileapi="ctrl.reset"]',
-					abort: '[data-fileapi="ctrl.abort"]'
+					upload: _optDataAttr('ctrl.upload'),
+					reset: _optDataAttr('ctrl.reset'),
+					abort: _optDataAttr('ctrl.abort')
 				},
 				empty: {
-					show: '[data-fileapi="empty.show"]',
-					hide: '[data-fileapi="empty.hide"]'
+					show: _optDataAttr('empty.show'),
+					hide: _optDataAttr('empty.hide')
 				},
 				emptyQueue: {
-					show: '[data-fileapi="emptyQueue.show"]',
-					hide: '[data-fileapi="emptyQueue.hide"]'
+					show: _optDataAttr('emptyQueue.show'),
+					hide: _optDataAttr('emptyQueue.hide')
 				},
 				active: {
-					show: '[data-fileapi="active.show"]',
-					hide: '[data-fileapi="active.hide"]'
+					show: _optDataAttr('active.show'),
+					hide: _optDataAttr('active.hide')
 				},
-				size: '[data-fileapi="size"]',
-				name: '[data-fileapi="name"]',
-				progress: '[data-fileapi="progress"]',
+				size: _optDataAttr('size'),
+				name: _optDataAttr('name'),
+				progress: _optDataAttr('progress'),
 				file: {
-					tpl: '[data-fileapi="file.tpl"]',
-					progress: '[data-fileapi="file.progress"]',
+					tpl: _optDataAttr('file.tpl'),
+					progress: _optDataAttr('file.progress'),
 					active: {
-						show: '[data-fileapi="active.show"]',
-						hide: '[data-fileapi="active.hide"]'
+						show: _optDataAttr('active.show'),
+						hide: _optDataAttr('active.hide')
 					},
 					preview: {
 						el: 0,
@@ -100,9 +105,9 @@
 					}
 				},
 				dnd: {
-					el: '[data-fileapi="dnd"]',
+					el: _optDataAttr('dnd'),
 					hover: 'dnd_hover',
-					fallback: '[data-filapi="dnd.fallback"]'
+					fallback: _optDataAttr('dnd.fallback')
 				}
 			},
 
@@ -172,8 +177,8 @@
 
 		this.$progress = this.elem('progress');
 
-		if( options.resetOnSelect === void 0 ){
-			options.resetOnSelect = !options.multiple;
+		if( options.clearOnSelect === void 0 ){
+			options.clearOnSelect = !options.multiple;
 		}
 
 		this.clear();
@@ -372,7 +377,7 @@
 		},
 
 		_onUploadEvent: function (evt, ui){
-			var _this = this, $progress = this.$progress, type = evt.type;
+			var _this = this, $progress = _this.$progress, type = evt.type;
 
 			if( type == 'progress' ){
 				$progress.stop().animate({ width: ui.loaded/ui.total*100 + '%' }, 300);
@@ -385,7 +390,7 @@
 				// Завершение загрузки
 				var fn = function (){
 					$progress.dequeue();
-					_this.dequeue();
+					_this[_this.options.clearOnComplete ? 'clear' : 'dequeue']();
 				};
 
 				this.xhr = null;
@@ -603,9 +608,9 @@
 		/**
 		 * Add files to queue
 		 * @param  {Array}    files
-		 * @param  {Boolean}  [reset]
+		 * @param  {Boolean}  [clear]
 		 */
-		add: function (files, reset){
+		add: function (files, clear){
 			files = [].concat(files);
 
 			if( files.length ){
@@ -629,8 +634,8 @@
 					this.xhr.append(files);
 				}
 
-				this.queue = reset ? files : this.queue.concat(files);
-				this.files = reset ? files : this.files.concat(files);
+				this.queue = clear ? files : this.queue.concat(files);
+				this.files = clear ? files : this.files.concat(files);
 
 				if( this.options.autoUpload ){
 					this.upload();
@@ -770,6 +775,7 @@
 					, uploadOpts = {
 						  url:   opts.url
 						, data:  $.extend({}, this.serialize(), opts.data)
+						, headers: opts.headers
 						, files: files
 						, chunkSize: opts.chunkSize|0
 						, chunkUploadRetry: opts.chunkUploadRetry|0
