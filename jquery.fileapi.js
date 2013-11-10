@@ -15,7 +15,10 @@
 
 		, _dataAttr = 'data-fileapi'
 		, _dataFileId = 'data-fileapi-id'
+
 		, _slice	= [].slice
+		, _each		= api.each
+
 		, _bind		= function (ctx, fn) {
 			var args = _slice.call(arguments, 2);
 			return	fn.bind ? fn.bind.apply(fn, [ctx].concat(args)) : function (){
@@ -140,7 +143,7 @@
 		this.itemTplFn = $.fn.fileapi.tpl( $('<div/>').append( this.elem('file.tpl')).html() );
 
 
-		api.each(options, function (value, option){
+		_each(options, function (value, option){
 			this._setOption(option, value);
 		}, this);
 
@@ -226,7 +229,7 @@
 					fn.call(_this, data);
 				});
 			} else {
-				api.each(files, function (file){
+				_each(files, function (file){
 					data[!maxSize || file.size <= maxSize ? 'files' : 'other'].push(file);
 				});
 
@@ -279,7 +282,7 @@
 		_onSelect: function (evt){
 			this._getFiles(evt, _bind(this, function (data){
 				if( data.all.length && this.emit('select', data) !== false ){
-					this.add(data.files, this.options.resetOnSelect);
+					this.add(data.files, this.options.clearOnSelect);
 				}
 			}));
 		},
@@ -418,7 +421,7 @@
 					trans.rotate	= deg;
 				}
 				else {
-					api.each(trans, function (opts){
+					_each(trans, function (opts){
 						opts.crop	= crop;
 						opts.rotate	= deg;
 					});
@@ -485,7 +488,7 @@
 			;
 
 
-			api.each(files, function (file, i){
+			_each(files, function (file, i){
 				var uid = api.uid(file);
 
 				name.push(file.name);
@@ -625,7 +628,7 @@
 				}
 
 				if( preview && preview.el ){
-					api.each(files, function (file){
+					_each(files, function (file){
 						this._makeFilePreview(api.uid(file), file, preview, true);
 					}, this);
 				}
@@ -687,7 +690,7 @@
 		 */
 		option: function (name, value){
 			if( value !== void 0 && $.isPlainObject(value) ){
-				api.each(value, function (val, key){
+				_each(value, function (val, key){
 					this.option(name+'.'+key, val);
 				}, this);
 
@@ -788,7 +791,7 @@
 				files[$el.find(':file').attr('name') || 'files[]'] = this.queue;
 
 				// Add event listeners
-				api.each(['upload', 'progress', 'complete'], function (name){
+				_each(['upload', 'progress', 'complete'], function (name){
 					uploadOpts[name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], '');
 					uploadOpts['file'+name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], 'file');
 				}, this);
@@ -828,7 +831,7 @@
 
 
 						var rx = preview.width/coords.w, ry = preview.height/coords.h;
-
+						
 						$el.find('>div>div').css({
 							  width:	Math.round(rx * info.width)
 							, height:	Math.round(ry * info.height)
@@ -1017,6 +1020,12 @@
 			$el.first().Jcrop.apply($el, arguments);
 		}
 		else {
+			var ratio = (opts.aspectRatio || opts.minSize[0]/opts.minSize[1]);
+
+			if( $.isArray(opts.minSize) && opts.aspectRatio === void 0 ){
+				opts.aspectRatio = ratio;
+			}
+
 			api.getInfo(file, function (err, info){
 				var Image = api.Image(file);
 
@@ -1030,7 +1039,7 @@
 						, minSide = Math.min(img.width, img.height)
 
 						, selWidth = minSide
-						, selHeight = minSide / (opts.aspectRatio || 1)
+						, selHeight = minSide / ratio
 					;
 
 					if( selection ){
@@ -1048,7 +1057,7 @@
 						opts.setSelect = [selLeft|0, selTop|0, (selLeft + selWidth)|0, (selTop + selHeight)|0];
 					}
 
-					api.each(['onSelect', 'onChange'], function (name, fn){
+					_each(['onSelect', 'onChange'], function (name, fn){
 						if( fn = opts[name] ){
 							opts[name] = function (coords){
 								var fw = info.width/img.width, fh = info.height/img.height;

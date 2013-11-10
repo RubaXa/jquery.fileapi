@@ -118,7 +118,7 @@
 
 								if( file ){
 									$('#popup').modal({
-										closeOnEsc: false,
+										closeOnEsc: true,
 										closeOnOverlayClick: false,
 										onOpen: function (overlay){
 											$(overlay).on('click', '.js-upload', function (){
@@ -132,7 +132,6 @@
 												maxSize: [$(window).width()-100, $(window).height()-100],
 												minSize: [200, 200],
 												selection: '90%',
-												aspectRatio: 1,
 												onSelect: function (coords){
 													$('#userpic').fileapi('crop', file, coords);
 												}
