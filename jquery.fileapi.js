@@ -832,12 +832,40 @@
 
 						var rx = preview.width/coords.w, ry = preview.height/coords.h;
 						
+						if( preview.keepAspectRatio ){
+							var mx = preview.width, my = preview.height;
+
+							if (rx > 1 && ry > 1){ // image is smaller than preview (no scale)
+								rx = ry = 1;
+								my = coords.h;
+								mx = coords.w;
+
+							} else { // image is bigger than preview (scale)
+								if( rx < ry ){
+									ry = rx;
+									my = preview.width * coords.h / coords.w;
+								} else {
+									rx = ry;
+									mx = preview.height * coords.w / coords.h;
+								}
+							}
+						}
+
 						$el.find('>div>div').css({
 							  width:	Math.round(rx * info.width)
 							, height:	Math.round(ry * info.height)
 							, marginLeft:	-Math.round(rx * coords.x)
 							, marginTop:	-Math.round(ry * coords.y)
 						});
+
+						if( preview.keepAspectRatio ){ // create side gaps
+							$el.find('>div').css({
+								  width:	Math.round(mx)
+								, height:	Math.round(my)
+								, marginLeft:	mx < preview.width  ? Math.round((preview.width - mx) / 2)  : 0
+								, marginTop:	my < preview.height ? Math.round((preview.height - my) / 2) : 0
+							});
+						}
 					}
 				}));
 			}

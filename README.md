@@ -144,7 +144,8 @@ elements: {
 	preview: {
 		el: 0, // css selector
 		width: 0,
-		height: 0
+		height: 0,
+		keepAspectRatio: false // optional: false to stretch cropped image to preview area, true scale image proportionally
 	},
 	// Total size of queue
 	size: '[data-fileapi="size"]',
@@ -169,6 +170,7 @@ elements: {
 			get: 0, // eg: function($el, file){ $el.append('<i class="icon icon_'+file.name.split('.').pop()+'"></i>'); }
 			width: 0,
 			height: 0,
+			keepAspectRatio: false // optional: false to stretch cropped image to preview area, true scale image proportionally
 		}
 	},
 	// Drag and drop
@@ -249,7 +251,7 @@ $('#userpic').fileapi({
 			, bgColor: '#fff'
 			, maxSize: [320, 240] // viewport max size
 			, minSize: [100, 100] // crop min size
-			, aspectRatio: 1
+			, aspectRatio: 1      // optional, aspect ratio: 0 - disable, >0 - fixed, remove this option: autocalculation from minSize
 			, onSelect: function (coords){
 				$('#userpic').fileapi('crop', imageFile, coords);
 			}
