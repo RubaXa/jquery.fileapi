@@ -189,6 +189,17 @@ elements: {
 ### onSelect`:Function`(evt`:$.Event`, data`:FilesObject`)
 Retrieve file List, takes two arguments.
 
+```js
+$('...').fileapi({
+	onSelect: function (evt, data){
+		data.all; // All files
+		data.files; // Correct files
+		data.other;
+	}
+});
+```
+
+
 ### onUpload`:Function`(evt`:$.Event`, xhr`:Object`, options`:Object`)
 Start uploading.
 
