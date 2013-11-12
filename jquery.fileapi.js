@@ -530,34 +530,22 @@
 			this.elem('size').text( this._getFormatedSize(size) );
 
 
-			if( this.__empty !== empty ){
-				this.__empty = empty;
-
-				this.elem('empty.show').toggle( empty );
-				this.elem('empty.hide').toggle( !empty );
-			}
+			this.elem('empty.show').toggle( empty );
+			this.elem('empty.hide').toggle( !empty );
 
 
-			if( this.__emptyQueue !== emptyQueue ){
-				this.__emptyQueue = empty;
-
-				this.elem('emptyQueue.show').toggle( emptyQueue );
-				this.elem('emptyQueue.hide').toggle( !emptyQueue );
-			}
+			this.elem('emptyQueue.show').toggle( emptyQueue );
+			this.elem('emptyQueue.hide').toggle( !emptyQueue );
 
 
-			if( this.__active !== active ){
-				this.__active = active;
+			this.elem('active.show').toggle( active );
+			this.elem('active.hide').toggle( !active );
 
-				this.elem('active.show').toggle( active );
-				this.elem('active.hide').toggle( !active );
 
-				this.$('.js-fileapi-wrapper,:file')
-					[active ? 'attr' : 'removeAttr']('aria-disabled', active)
-					[propFn]('disabled', active)
-				;
-			}
-
+			this.$('.js-fileapi-wrapper,:file')
+				[active ? 'attr' : 'removeAttr']('aria-disabled', active)
+				[propFn]('disabled', active)
+			;
 
 			// Upload control
 			this._disableElem('ctrl.upload', empty || active);
