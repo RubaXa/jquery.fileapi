@@ -18,6 +18,7 @@
 
 		, _slice	= [].slice
 		, _each		= api.each
+		, _extend	= api.extend
 
 		, _bind		= function (ctx, fn) {
 			var args = _slice.call(arguments, 2);
@@ -37,7 +38,7 @@
 		this.el  = el[0];
 
 		this._options = {}; // previous options
-		this.options  = options = $.extend({
+		this.options  = options = _extend({
 			url: 0,
 			data: {}, // additional POST-data
 			accept: 0, // accept mime types, "*" — unlimited
@@ -355,7 +356,7 @@
 				, files: xhr.files
 				, widget: this
 			};
-			return	$.extend(evt, extra);
+			return	_extend(evt, extra);
 		},
 
 		_emitUploadEvent: function (prefix){
@@ -419,16 +420,21 @@
 				  uid	= api.uid(file)
 				, deg	= this._rotate[uid]
 				, crop	= this._crop[uid]
+				, resize = this._resize[uid]
 			;
 
 			if( deg || crop ){
 				var trans = opts.imageTransform = opts.imageTransform || {};
 				if( $.isEmptyObject(trans) || _isOriginTransform(trans) ){
+					_extend(trans, resize);
+
 					trans.crop		= crop;
 					trans.rotate	= deg;
 				}
 				else {
 					_each(trans, function (opts){
+						_extend(opts, resize);
+
 						opts.crop	= crop;
 						opts.rotate	= deg;
 					});
@@ -577,8 +583,6 @@
 			;
 
 			if( /^image/.test(file.type) ){
-				api.log('_makeFilePreview:', uid, file);
-
 				var
 					  image = api.Image(file)
 					, doneFn = function (){
@@ -793,7 +797,7 @@
 					, files = {}
 					, uploadOpts = {
 						  url:   opts.url
-						, data:  $.extend({}, this.serialize(), opts.data)
+						, data:  _extend({}, this.serialize(), opts.data)
 						, headers: opts.headers
 						, files: files
 						, chunkSize: opts.chunkSize|0
@@ -828,7 +832,9 @@
 
 			if( $el.length ){
 				api.getInfo(file, _bind(this, function (err, info){
-					if( !err ){
+					if( err ){
+						this.emit('preview-error', [err, file]);
+					} else {
 						// @todo error emit
 						if( !$el.find('div>div').length ){
 							$el.html(
@@ -846,10 +852,10 @@
 						}
 
 
-						// @todo: Need refacting
 						var
-							mx = preview.width, my = preview.height,
-							rx = preview.width/coords.w, ry = preview.height/coords.h
+							  pw = preview.width, ph = preview.height
+							, mx = pw, my = ph
+							, rx = pw/coords.w, ry = ph/coords.h
 						;
 						
 						if( preview.keepAspectRatio ){
@@ -861,10 +867,10 @@
 							} else { // image is bigger than preview (scale)
 								if( rx < ry ){
 									ry = rx;
-									my = preview.width * coords.h / coords.w;
+									my = pw * coords.h / coords.w;
 								} else {
 									rx = ry;
-									mx = preview.height * coords.w / coords.h;
+									mx = ph * coords.w / coords.h;
 								}
 							}
 						}
@@ -880,8 +886,8 @@
 							$el.find('>div').css({
 								  width:	Math.round(mx)
 								, height:	Math.round(my)
-								, marginLeft:	mx < preview.width  ? Math.round((preview.width - mx) / 2)  : 0
-								, marginTop:	my < preview.height ? Math.round((preview.height - my) / 2) : 0
+								, marginLeft:	mx < pw  ? Math.round((pw - mx) / 2)  : 0
+								, marginTop:	my < ph ? Math.round((ph - my) / 2) : 0
 							});
 						}
 					}
@@ -889,6 +895,14 @@
 			}
 
 			this._crop[uid] = coords;
+		},
+
+		resize: function (file, width, height, type){
+			this._resize[api.uid(file)] = {
+				  type: type
+				, width: width
+				, height: height
+			};
 		},
 
 		rotate: function (file, deg){
@@ -915,6 +929,7 @@
 
 		clear: function (){
 			this._crop		= {};
+			this._resize	= {};
 			this._rotate	= {}; // rotate deg
 
 			this.queue		= [];
@@ -1001,7 +1016,7 @@
 			if( typeof options == 'string' ){
 				var fn = plugin[options], res;
 				if( $.isFunction(fn) ){
-					res = fn.call(plugin, value, arguments[2]);
+					res = fn.apply(plugin, _slice.call(arguments, 1));
 				}
 				else if( fn === void 0 ){
 					res = this.option(options, value);
@@ -1016,7 +1031,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.1.4';
+	$.fn.fileapi.version = '0.2.0';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
@@ -1070,7 +1085,7 @@
 		}
 		else {
 			$el.data(key, true);
-			options = $.extend({ success: noop, error: noop }, options);
+			options = _extend({ success: noop, error: noop }, options);
 
 			FileAPI.Camera.publish($el, options, function (err, cam){
 				$el.data(key, err ? false : cam);
@@ -1092,17 +1107,24 @@
 			$el.first().Jcrop.apply($el, arguments);
 		}
 		else {
-			var ratio = (opts.aspectRatio || opts.minSize[0]/opts.minSize[1]);
+			var
+				minSize = opts.minSize || [0, 0],
+				ratio = (opts.aspectRatio || minSize[0]/minSize[1])
+			;
 
-			if( $.isArray(opts.minSize) && opts.aspectRatio === void 0 ){
+			if( $.isArray(opts.minSize) && opts.aspectRatio === void 0 && ratio > 0 ){
 				opts.aspectRatio = ratio;
 			}
 
 			api.getInfo(file, function (err, info){
-				var Image = api.Image(file);
+				var Image = api.Image(file), maxSize = opts.maxSize;
 
-				if( opts.maxSize ){
-					Image.resize(opts.maxSize[0], opts.maxSize[1], 'max');
+				if( maxSize ){
+					Image.resize(
+						  Math.max(maxSize[0], minSize[0])
+						, Math.max(maxSize[1], minSize[1])
+						, 'max'
+					);
 				}
 
 				Image.rotate('auto').get(function (err, img){
@@ -1138,6 +1160,10 @@
 									, y: (coords.y * fh + 0.5)|0
 									, w: (coords.w * fw + 0.5)|0
 									, h: (coords.h * fh + 0.5)|0
+									, lx: coords.x // local coords
+									, ly: coords.y
+									, lw: coords.w
+									, lh: coords.h
 								});
 							};
 						}

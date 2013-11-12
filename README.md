@@ -194,7 +194,18 @@ $('...').fileapi({
 	onSelect: function (evt, data){
 		data.all; // All files
 		data.files; // Correct files
-		data.other;
+		if( data.other.length ){
+			// errors
+			var errors = data.other[0].errors;
+			if( errors ){
+				errors.maxSize;
+				errors.maxFiles;
+				errors.minWidth;
+				errors.minHeight;
+				errors.maxWidth;
+				errors.maxHeight;
+			}
+		}
 	}
 });
 ```
@@ -303,13 +314,19 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
-## 0.1.4
+### 0.2.0
+ * enhancement `ui event` in onSelect
+ * + `maxFiles` option support
+ * fixed `onFileUpload` & `onFileProgress` events
+ * + #9: Preview with aspect ratio keeping support (optional)
+
+### 0.1.4
  * + `headers:Object`
  * + `queue()`; * `clear()`;
  * `clearOnComplete: false`
  * * `resetOnSelect` -> `clearOnSelect`
 
-## 0.1.1
+### 0.1.1
  * + `resetOnSelect` option, default `!multiple`
  * fix $.fn.cropper reinit
 
