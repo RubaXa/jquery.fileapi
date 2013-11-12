@@ -609,7 +609,7 @@
 		emit: function (name, arg){
 			var opts = this.options, evt = $.Event(name), res;
 			evt.widget = this;
-			name = $.camelCase('on-'+name.replace(/(file)(upload)/i, '$1-$2'));
+			name = $.camelCase('on-'+name.replace(/(file)(upload|prgoress|complete)/i, '$1-$2'));
 			if( $.isFunction(opts[name]) ){
 				res = opts[name].call(this.el, evt, arg);
 			}
