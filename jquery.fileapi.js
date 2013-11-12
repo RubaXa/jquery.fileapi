@@ -49,7 +49,7 @@
 			chunkUploadRetry: 3, // number of retries during upload chunks (html5)
 
 			maxSize: 0, // max file size, 0 — unlimited
-			maxFiles: 0, // @todo: max uploaded files
+			maxFiles: 0, // 0 unlimited
 			imageSize: 0, // { minWidth: 320, minHeight: 240, maxWidth: 3840, maxHeight: 2160 }
 
 			sortFn: 0,
@@ -199,7 +199,9 @@
 			var
 				  opts = this.options
 				, maxSize = opts.maxSize
+				, maxFiles = opts.maxFiles
 				, filterFn = opts.filterFn
+				, countFiles = this.files.length
 				, files = api.getFiles(evt)
 				, data = {
 					  all: files
@@ -213,26 +215,31 @@
 
 			if( imageSize || filterFn ){
 				api.filterFiles(files, function (file, info){
-					var ok = true;
 					if( info && imageSize ){
-						ok =   (!imageSize.minWidth || info.width >= imageSize.minWidth)
-							&& (!imageSize.minHeight || info.height >= imageSize.minHeight)
-							&& (!imageSize.maxWidth || info.height <= imageSize.maxWidth)
-							&& (!imageSize.maxHeight || info.height <= imageSize.maxHeight)
-						;
+						_checkFileByCriteria(file, 'minWidth', imageSize.minWidth, info.width);
+						_checkFileByCriteria(file, 'minHeight', imageSize.minHeight, info.height);
+						_checkFileByCriteria(file, 'maxWidth', imageSize.maxWidth, info.width);
+						_checkFileByCriteria(file, 'maxHeight', imageSize.maxHeight, info.height);
 					}
-					return	ok && (!maxSize || file.size <= maxSize) && (!filterFn || filterFn(file, info));
-				}, function (succes, other){
-					data.files = succes;
-					data.other = other;
+
+					_checkFileByCriteria(file, 'maxSize', maxSize, file.size);
+
+					return	!file.errors && (!filterFn || filterFn(file, info));
+				}, function (success, rejected){
+					_extractFilesOverLimit(maxFiles, countFiles, success, rejected);
+
+					data.other = rejected;
+					data.files = success;
 
 					fn.call(_this, data);
 				});
 			} else {
 				_each(files, function (file){
-					data[!maxSize || file.size <= maxSize ? 'files' : 'other'].push(file);
+					_checkFileByCriteria(file, 'maxSize', maxSize, file.size);
+					data[file.errors ? 'other' : 'files'].push(file);
 				});
 
+				_extractFilesOverLimit(maxFiles, countFiles, data.files, data.other);
 				fn.call(_this, data);
 			}
 		},
@@ -476,8 +483,8 @@
 
 		_redraw: function (){
 			var
-				  active = !!this.active
-				, files = this.files
+				  files = this.files
+				, active = !!this.active
 				, empty = !files.length && !active
 				, emptyQueue = !this.queue.length && !active
 				, name = []
@@ -546,11 +553,20 @@
 			}
 
 
-			// Upload & reset control
-			this.elem('ctrl.upload')
-				.add( this.elem('ctrl.reset') )
-				[empty || active ? 'attr' : 'removeAttr']('aria-disabled', empty || active)
-				[propFn]('disabled', empty || active)
+			// Upload control
+			this._disableElem('ctrl.upload', empty || active);
+
+			// Reset control
+			this._disableElem('ctrl.reset', empty || active);
+
+			// Abort control
+			this._disableElem('ctrl.abort', !active);
+		},
+
+		_disableElem: function (name, state){
+			this.elem(name)
+				[state ? 'attr' : 'removeAttr']('aria-disabled', 'disabled')
+				[propFn]('disabled', state)
 			;
 		},
 
@@ -601,7 +617,7 @@
 		emit: function (name, arg){
 			var opts = this.options, evt = $.Event(name), res;
 			evt.widget = this;
-			name = $.camelCase('on-'+name.replace(/(file)(upload)/, '$1-$2'));
+			name = $.camelCase('on-'+name.replace(/(file)(upload)/i, '$1-$2'));
 			if( $.isFunction(opts[name]) ){
 				res = opts[name].call(this.el, evt, arg);
 			}
@@ -793,7 +809,7 @@
 				// Add event listeners
 				_each(['upload', 'progress', 'complete'], function (name){
 					uploadOpts[name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], '');
-					uploadOpts['file'+name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], 'file-');
+					uploadOpts['file'+name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], 'file');
 				}, this);
 
 				// Start uploading
@@ -937,6 +953,32 @@
 			}
 		}
 		return	false;
+	}
+
+
+	function _checkFileByCriteria(file, name, excepted, actual){
+		if( excepted ){
+			var val = excepted - actual, isMax = /max/.test(name);
+			if( (isMax && val < 0) || (!isMax && val > 0) ){
+				if( !file.errors ){
+					file.errors = {};
+				}
+				file.errors[name] = Math.abs(val);
+			}
+		}
+	}
+
+
+	function _extractFilesOverLimit(limit, countFiles, files, other){
+		if( limit ){
+			var delta = files.length - (limit - countFiles);
+			if( delta > 0 ){
+				_each(files.splice(0, delta), function (file, i){
+					_checkFileByCriteria(file, 'maxFiles', -1, i);
+					other.push(file);
+				});
+			}
+		}
 	}
 
 
