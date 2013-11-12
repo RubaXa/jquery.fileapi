@@ -793,7 +793,7 @@
 				// Add event listeners
 				_each(['upload', 'progress', 'complete'], function (name){
 					uploadOpts[name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], '');
-					uploadOpts['file'+name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], 'file');
+					uploadOpts['file'+name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], 'file-');
 				}, this);
 
 				// Start uploading
@@ -830,11 +830,13 @@
 						}
 
 
-						var rx = preview.width/coords.w, ry = preview.height/coords.h;
+						// @todo: Need refacting
+						var
+							mx = preview.width, my = preview.height,
+							rx = preview.width/coords.w, ry = preview.height/coords.h
+						;
 						
 						if( preview.keepAspectRatio ){
-							var mx = preview.width, my = preview.height;
-
 							if (rx > 1 && ry > 1){ // image is smaller than preview (no scale)
 								rx = ry = 1;
 								my = coords.h;
