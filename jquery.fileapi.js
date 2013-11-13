@@ -719,7 +719,7 @@
 						val[part] = value;
 						break;
 					}
-					else if( val[part] === void 0 ){
+					else if( !val[part] ){
 						val[part] = {};
 					}
 
@@ -1007,7 +1007,7 @@
 					res = fn.apply(plugin, _slice.call(arguments, 1));
 				}
 				else if( fn === void 0 ){
-					res = this.option(options, value);
+					res = plugin.option(options, value);
 				}
 				return	res === void 0 ? this : res;
 			}
