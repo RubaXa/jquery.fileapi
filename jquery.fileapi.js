@@ -299,16 +299,12 @@
 			var
 				  el = evt.currentTarget
 				, act = $.attr(el, _dataAttr)
-				, $item = $(el).closest('['+_dataFileId+']', this.$el)
-				, uid = $item.attr(_dataFileId)
+				, uid = $(el).closest('['+_dataFileId+']', this.$el).attr(_dataFileId)
 				, prevent = true
 			;
 
 			if( 'remove' == act ){
-				$item.remove();
-				this.queue = api.filter(this.queue, function (file){ return api.uid(file) != uid; });
-				this.files = api.filter(this.files, function (file){ return api.uid(file) != uid; });
-				this._redraw();
+				this.remove(uid);
 			}
 			else if( /^rotate/.test(act)  ){
 				this.rotate(uid, (/ccw/.test(act) ? '-=90' : '+=90'));
@@ -913,6 +909,15 @@
 				, '-moz-transform': 'rotate('+deg+'deg)'
 				, 'transform': 'rotate('+deg+'deg)'
 			});
+		},
+
+		remove: function (file){
+			var uid = typeof file == 'object' ? api.uid(file) : file;
+
+			this.fileElem(uid).remove();
+			this.queue = api.filter(this.queue, function (file){ return api.uid(file) != uid; });
+			this.files = api.filter(this.files, function (file){ return api.uid(file) != uid; });
+			this._redraw();
 		},
 
 		clear: function (){

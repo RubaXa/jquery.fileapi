@@ -314,6 +314,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+ * + `remove(file)` method
+
 ### 0.2.0
  * enhancement `ui event` in onSelect
  * + `maxFiles` option support
