@@ -211,22 +211,48 @@ $('...').fileapi({
 ```
 
 
-### onUpload`:Function`(evt`:$.Event`, xhr`:Object`, options`:Object`)
+### onUpload`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Start uploading.
+```js
+function (evt, uiEvt){
+	// Base properties
+	var file = uiEvt.file;
+	var files = uiEvt.files;
+	var widget = uiEvt.widget;
+	var xhr = uiEvt.xhr;
+}
+```
 
-### onFileUpload`:Function`(evt`:$.Event`, file`:Object`, xhr`:Object`, options`:Object`)
+### onFileUpload`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Start upload the same file.
 
-### onProgress`:Function`(evt`:$.Event`, uiEvt`:ProgressEvent`, file`:Object`, xhr`:Object`, options`:Object`)
+### onProgress`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Common uploading progress.
+```js
+function (evt, uiEvt){
+	var part = uiEvt.loaded / uiEvt.total;
+}
+```
 
-### onFileProgress`:Function`(evt`:$.Event`, uiEvt`:ProgressEvent`, file`:Object`, xhr`:Object`, options`:Object`)
+### onFileProgress`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Progress upload the same file.
+```js
+function (evt, uiEvt){
+	var file = uiEvt.file;
+	var part = uiEvt.loaded / uiEvt.total;
+}
+```
 
-### onComplete`:Function`(evt`:$.Event`, err`:String|Null`, xhr`:Object`, file`:Object`, options`:Object`)
+### onComplete`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Completion of the entire uploading.
+```js
+function (evt, uiEvt){
+	var error = uiEvt.error;
+	var result = uiEvt.result; // server response
+}
+```
 
-### onFileComplete`:Function`(evt`:$.Event`, err`:String|Null`, xhr`:Object`, file`:Object`, options`:Object`)
+### onFileComplete`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Completion of uploading the file.
 
 ### onDrop`:Function`(evt`:$.Event`, data`:FilesObject`)
