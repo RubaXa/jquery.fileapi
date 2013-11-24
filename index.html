@@ -258,12 +258,12 @@
 
 							<div class="js-files b-upload__files">
 								<div class="js-file-tpl b-thumb" data-id="<%=uid%>" title="<%-name%>, <%-sizeText%>">
-									<div data-fileapi="remove" class="b-thumb__del">✖</div>
+									<div data-fileapi="file.remove" class="b-thumb__del">✖</div>
 									<div class="b-thumb__preview">
 										<div class="b-thumb__preview__pic"></div>
 									</div>
 									<% if( /^image/.test(type) ){ %>
-										<div data-fileapi="rotate.cw" class="b-thumb__rotate"></div>
+										<div data-fileapi="file.rotate.cw" class="b-thumb__rotate"></div>
 									<% } %>
 									<div class="b-thumb__progress progress progress-small"><div class="bar"></div></div>
 									<div class="b-thumb__name"><%-name%></div>

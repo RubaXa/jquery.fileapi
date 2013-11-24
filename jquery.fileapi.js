@@ -38,7 +38,7 @@
 		this.el  = el[0];
 
 		this._options = {}; // previous options
-		this.options  = options = _extend({
+		this.options  = { // current options
 			url: 0,
 			data: {}, // additional POST-data
 			accept: 0, // accept mime types, "*" — unlimited
@@ -97,8 +97,8 @@
 					tpl: _optDataAttr('file.tpl'),
 					progress: _optDataAttr('file.progress'),
 					active: {
-						show: _optDataAttr('active.show'),
-						hide: _optDataAttr('active.hide')
+						show: _optDataAttr('file.active.show'),
+						hide: _optDataAttr('file.active.hide')
 					},
 					preview: {
 						el: 0,
@@ -106,7 +106,10 @@
 						width: 0,
 						height: 0,
 						processing: 0
-					}
+					},
+					abort: _optDataAttr('file.abort'),
+					remove: _optDataAttr('file.remove'),
+					rotate: _optDataAttr('file.rotate')
 				},
 				dnd: {
 					el: _optDataAttr('dnd'),
@@ -126,9 +129,16 @@
 
 			onFileUpload: noop,
 			onFileProgress: noop,
-			onFileComplete: noop
-		}, options);
+			onFileComplete: noop,
 
+			onRemove: null,
+			onRemoveCompleted: null
+		};
+
+		$.extend(true, this.options, options); // deep extend
+		options = this.options;
+
+		this.option('elements.file.preview.rotate', options.imageAutoOrientation);
 
 		if( !options.url ){
 			var url = this.$el.attr('action') || this.$el.find('form').attr('action');
@@ -140,8 +150,8 @@
 		}
 
 
-		this.$files = this.elem('list');
-		this.itemTplFn = $.fn.fileapi.tpl( $('<div/>').append( this.elem('file.tpl')).html() );
+		this.$files = this.$elem('list');
+		this.itemTplFn = $.fn.fileapi.tpl( $('<div/>').append( this.$elem('file.tpl')).html() );
 
 
 		_each(options, function (value, option){
@@ -171,15 +181,15 @@
 
 		// Drag'n'Drop
 		var dnd = FileAPI.support.dnd;
-		this.elem('dnd.el', true).toggle(dnd);
-		this.elem('dnd.fallback').toggle(!dnd);
+		this.$elem('dnd.el', true).toggle(dnd);
+		this.$elem('dnd.fallback').toggle(!dnd);
 
 		if( dnd ){
-			this.elem('dnd.el', true).dnd(_bind(this, this._onDropHover), _bind(this, this._onDrop));
+			this.$elem('dnd.el', true).dnd(_bind(this, this._onDropHover), _bind(this, this._onDrop));
 		}
 
 
-		this.$progress = this.elem('progress');
+		this.$progress = this.$elem('progress');
 
 		if( options.clearOnSelect === void 0 ){
 			options.clearOnSelect = !options.multiple;
@@ -300,13 +310,16 @@
 				  el = evt.currentTarget
 				, act = $.attr(el, _dataAttr)
 				, uid = $(el).closest('['+_dataFileId+']', this.$el).attr(_dataFileId)
+				, file = this._getFile(uid)
 				, prevent = true
 			;
 
-			if( 'remove' == act ){
-				this.remove(uid);
+			if( 'file.remove' == act ){
+				if( file && this.emit('remove'+(file.complete ? 'Completed' : ''), file) ){
+					this.remove(uid);
+				}
 			}
-			else if( /^rotate/.test(act)  ){
+			else if( /^file\.rotate/.test(act)  ){
 				this.rotate(uid, (/ccw/.test(act) ? '-=90' : '+=90'));
 			}
 			else {
@@ -345,6 +358,10 @@
 			}
 		},
 
+		_getFile: function (uid){
+			return api.filter(this.files, function (file){ return api.uid(file) == uid; })[0];
+		},
+
 		_getUploadEvent: function (extra){
 			var xhr = this.xhr, evt = {
 				  xhr: xhr
@@ -357,30 +374,31 @@
 
 		_emitUploadEvent: function (prefix){
 			var evt = this._getUploadEvent();
-			this.emit(prefix+'upload', evt);
+			this.emit(prefix+'Upload', evt);
 		},
 
 		_emitProgressEvent: function (prefix, event){
 			var evt = this._getUploadEvent(event);
-			this.emit(prefix+'progress', evt);
+			this.emit(prefix+'Progress', evt);
 		},
 
-		_emitCompleteEvent: function (prefix, err){
-			var
-				  xhr = this.xhr
-				, evt = this._getUploadEvent({
-					  error: err
-					, status: xhr.status
-					, statusText: xhr.statusText
-					, result: xhr.responseText
-				})
-			;
+		_emitCompleteEvent: function (prefix, err, xhr, file){
+			var evt = this._getUploadEvent({
+				  error: err
+				, status: xhr.status
+				, statusText: xhr.statusText
+				, result: xhr.responseText
+			});
+
+			if( prefix == 'file' ){
+				file.complete = true;
+			}
 
 			if( this.options.dataType == 'json' ){
 				evt.result = $.parseJSON(evt.result);
 			}
 
-			this.emit(prefix+'complete', evt);
+			this.emit(prefix+'Complete', evt);
 		},
 
 		_onUploadEvent: function (evt, ui){
@@ -443,13 +461,14 @@
 				  _this = this
 				, type = evt.type.substr(4)
 				, uid = api.uid(ui.file)
-				, $file = this.fileElem(uid)
+				, $file = this.$file(uid)
 				, $progress = this._$fileprogress
+				, opts = this.options
 			;
 
 			if( this.__fileId !== uid ){
 				this.__fileId = uid;
-				this._$fileprogress = $progress = $file.find(this.option('elements.file.progress'));
+				this._$fileprogress = $progress = this.$elem('file.progress', $file);
 			}
 
 			if( type == 'progress' ){
@@ -457,17 +476,22 @@
 			}
 			else if( type == 'upload' || type == 'complete' ){
 				var fn = function (){
-					var elem = 'elements.file.'+ type;
+					var
+						  elem = 'file.'+ type
+						, $remove = _this.$elem('file.remove', $file)
+					;
 
 					if( type == 'upload' ){
-						$file.find('['+_dataAttr+'="remove"]').hide();
+						$remove.hide();
 						$progress.width(0);
+					} else if( opts.onRemoveCompleted ){
+						$remove.show();
 					}
 
 					$progress.dequeue();
 
-					$file.find(_this.option(elem + '.show')).show();
-					$file.find(_this.option(elem + '.hide')).hide();
+					_this.$elem(elem + '.show').show();
+					_this.$elem(elem + '.hide').hide();
 				};
 
 				if( $progress.length ){
@@ -503,7 +527,7 @@
 				name.push(file.name);
 				size += file.size;
 
-				if( $files.length && !this.fileElem(uid).length ){
+				if( $files.length && !this.$file(uid).length ){
 					var html = this.itemTplFn({
 						  $idx: offset + i
 						, uid:  file.uid
@@ -522,20 +546,20 @@
 			}, this);
 
 
-			this.elem('name').text( name.join(', ') );
-			this.elem('size').text( this._getFormatedSize(size) );
+			this.$elem('name').text( name.join(', ') );
+			this.$elem('size').text( this._getFormatedSize(size) );
 
 
-			this.elem('empty.show').toggle( empty );
-			this.elem('empty.hide').toggle( !empty );
+			this.$elem('empty.show').toggle( empty );
+			this.$elem('empty.hide').toggle( !empty );
 
 
-			this.elem('emptyQueue.show').toggle( emptyQueue );
-			this.elem('emptyQueue.hide').toggle( !emptyQueue );
+			this.$elem('emptyQueue.show').toggle( emptyQueue );
+			this.$elem('emptyQueue.hide').toggle( !emptyQueue );
 
 
-			this.elem('active.show').toggle( active );
-			this.elem('active.hide').toggle( !active );
+			this.$elem('active.show').toggle( active );
+			this.$elem('active.hide').toggle( !active );
 
 
 			this.$('.js-fileapi-wrapper,:file')
@@ -554,7 +578,7 @@
 		},
 
 		_disableElem: function (name, state){
-			this.elem(name)
+			this.$elem(name)
 				[state ? 'attr' : 'removeAttr']('aria-disabled', 'disabled')
 				[propFn]('disabled', state)
 			;
@@ -563,53 +587,56 @@
 		_makeFilePreview: function (uid, file, opts, global){
 			var
 				  _this = this
-				, $el = global ? _this.$(opts.el) : _this.fileElem(uid).find(opts.el)
+				, $el = global ? _this.$(opts.el) : _this.$file(uid).find(opts.el)
 			;
 
-			if( /^image/.test(file.type) ){
-				var
-					  image = api.Image(file)
-					, doneFn = function (){
-						image.get(function (err, img){
-							if( !_this._crop[uid] ){
-								if( err ){
-									opts.get && opts.get($el, file);
-									_this.emit('filePreviewError', { error: err, file: file });
-								} else {
-									$el.html(img);
+			if( !_this._crop[uid] ){
+				if( /^image/.test(file.type) ){
+					var
+						  image = api.Image(file)
+						, doneFn = function (){
+							image.get(function (err, img){
+								if( !_this._crop[uid] ){
+									if( err ){
+										opts.get && opts.get($el, file);
+										_this.emit('previewError', [err, file]);
+									} else {
+										$el.html(img);
+									}
 								}
-							}
-						});
+							});
+						}
+					;
+
+					if( opts.width ){
+						image.preview(opts.width, opts.height);
 					}
-				;
 
-				if( opts.width ){
-					image.preview(opts.width, opts.height);
-				}
+					if( opts.rotate ){
+						image.rotate('auto');
+					}
 
-				if( opts.rotate ){
-					image.rotate(opts.rotate);
+					if( opts.processing ){
+						opts.processing(file, image, doneFn);
+					} else {
+						doneFn();
+					}
 				}
-
-				if( opts.processing ){
-					opts.processing(file, image, doneFn);
-				} else {
-					doneFn();
+				else {
+					opts.get && opts.get($el, file);
 				}
-			}
-			else {
-				opts.get && opts.get($el, file);
 			}
 		},
 
 		emit: function (name, arg){
-			var opts = this.options, evt = $.Event(name), res;
+			var opts = this.options, evt = $.Event(name.toLowerCase()), res;
 			evt.widget = this;
-			name = $.camelCase('on-'+name.replace(/(file)(upload|progress|complete)/i, '$1-$2'));
+			name = $.camelCase('on-'+name);
 			if( $.isFunction(opts[name]) ){
 				res = opts[name].call(this.el, evt, arg);
 			}
-			return	(res !== false) && this.$el.triggerHandler(evt, arg);
+			this.$el.triggerHandler(evt, arg);
+			return	(res !== false) && !evt.isDefaultPrevented();
 		},
 
 		/**
@@ -667,22 +694,29 @@
 
 		/**
 		 * @param  {String}   name
-		 * @param  {Boolean}  [up]
+		 * @param  {Boolean|jQuery}  [up]
+		 * @param  {jQuery}   [ctx]
 		 * @return {jQuery}
 		 */
-		elem: function (name, up){
+		$elem: function (name, up, ctx){
+			if( up && up.jquery ){
+				ctx = up;
+				up = false;
+			}
+
 			var sel = this.option('elements.'+name);
 			if( sel === void 0 && up ){
 				sel = this.option('elements.'+name.substr(0, name.lastIndexOf('.')));
 			}
-			return	this.$($.type(sel) != 'string' && $.isEmptyObject(sel) ? [] : sel);
+
+			return	this.$($.type(sel) != 'string' && $.isEmptyObject(sel) ? [] : sel, ctx);
 		},
 
 		/**
 		 * @param  {String}  uid
 		 * @return {jQuery}
 		 */
-		fileElem: function (uid){
+		$file: function (uid){
 			return	this.$('['+_dataFileId+'="'+uid+'"]');
 		},
 
@@ -795,9 +829,10 @@
 				files[$el.find(':file').attr('name') || 'files[]'] = this.queue;
 
 				// Add event listeners
-				_each(['upload', 'progress', 'complete'], function (name){
-					uploadOpts[name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], '');
-					uploadOpts['file'+name] = _bind(this, this[$.camelCase('_emit-'+name+'Event')], 'file');
+				_each(['Upload', 'Progress', 'Complete'], function (name){
+					var lowerName = name.toLowerCase();
+					uploadOpts[lowerName] = _bind(this, this['_emit'+name+'Event'], '');
+					uploadOpts['file'+lowerName] = _bind(this, this['_emit'+name+'Event'], 'file');
 				}, this);
 
 				// Start uploading
@@ -811,13 +846,13 @@
 				  uid = api.uid(file)
 				, opts = this.options
 				, preview = opts.multiple ? this.option('elements.file.preview') : opts.elements.preview
-				, $el = (opts.multiple ? this.fileElem(uid) : this.$el).find(preview && preview.el)
+				, $el = (opts.multiple ? this.$file(uid) : this.$el).find(preview && preview.el)
 			;
 
 			if( $el.length ){
 				api.getInfo(file, _bind(this, function (err, info){
 					if( err ){
-						this.emit('preview-error', [err, file]);
+						this.emit('previewError', [err, file]);
 					} else {
 						// @todo error emit
 						if( !$el.find('div>div').length ){
@@ -894,7 +929,7 @@
 				  uid = typeof file == 'object' ? api.uid(file) : file
 				, opts = this.options
 				, preview = opts.multiple ? this.option('elements.file.preview') : opts.elements.preview
-				, $el = (opts.multiple ? this.fileElem(uid) : this.$el).find(preview && preview.el)
+				, $el = (opts.multiple ? this.$file(uid) : this.$el).find(preview && preview.el)
 				, _rotate = this._rotate
 			;
 
@@ -914,7 +949,7 @@
 		remove: function (file){
 			var uid = typeof file == 'object' ? api.uid(file) : file;
 
-			this.fileElem(uid).remove();
+			this.$file(uid).remove();
 			this.queue = api.filter(this.queue, function (file){ return api.uid(file) != uid; });
 			this.files = api.filter(this.files, function (file){ return api.uid(file) != uid; });
 			this._redraw();
@@ -1024,7 +1059,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.2.0';
+	$.fn.fileapi.version = '0.3.0';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
