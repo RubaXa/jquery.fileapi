@@ -75,7 +75,7 @@ otherwise it is ignored. The value must be a comma-separated list of unique cont
 
 
 ### duplicate`:Boolean`
-The ability to download duplicates, default `false`.
+The ability to upload duplicates, default `false`.
 
 
 ### paramName`:String`
