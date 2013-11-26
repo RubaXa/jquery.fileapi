@@ -490,8 +490,8 @@
 
 					$progress.dequeue();
 
-					_this.$elem(elem + '.show').show();
-					_this.$elem(elem + '.hide').hide();
+					_this.$elem(elem + '.show', $file).show();
+					_this.$elem(elem + '.hide', $file).hide();
 				};
 
 				if( $progress.length ){
@@ -671,7 +671,11 @@
 				this.queue = clear ? files : this.queue.concat(files);
 				this.files = clear ? files : this.files.concat(files);
 
-				if( this.options.autoUpload ){
+				if( this.active ){
+					this.xhr.append(files);
+					this._redraw();
+				}
+				else if( this.options.autoUpload ){
 					this.upload();
 				} else {
 					this._redraw();
