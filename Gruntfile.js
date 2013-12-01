@@ -30,6 +30,16 @@ module.exports = function (grunt){
 			}
 		},
 
+		qunit: {
+			options: {
+				files: {
+					  'one': ['tests/files/image.jpg']
+					, 'multiple': ['tests/files/1px.gif', 'tests/files/hello.txt', 'tests/files/image.jpg', 'tests/files/dino.png', 'tests/files/lebowski.json']
+				}
+			},
+			all: ['tests/*.html']
+		},
+
 		version: {
 			src: ['<%= pkg.name %>.js', 'bower.json']
 		},
@@ -52,9 +62,11 @@ module.exports = function (grunt){
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 
-	// "npm test" runs these tasks
-	grunt.registerTask('test', ['jshint']);
+	// Load custom QUnit task, based on grunt-contrib-qunit, but support "files" option.
+	grunt.loadTasks('./tests/grunt-task/');
 
+	// "npm test" runs these tasks
+	grunt.registerTask('test', ['jshint', 'qunit']);
 
 	// Default task.
 	grunt.registerTask('default', ['test', 'version', 'uglify']);

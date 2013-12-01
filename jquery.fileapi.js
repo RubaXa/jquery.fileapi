@@ -26,8 +26,13 @@
 				return fn.apply(ctx, args.concat(_slice.call(arguments)));
 			};
 		}
+
 		, _optDataAttr = function (name){
 			return '['+_dataAttr+'="'+name+'"]';
+		}
+
+		, _isID = function (selector){
+			return	selector.indexOf('#') === 0;
 		}
 	;
 
@@ -93,6 +98,7 @@
 				size: _optDataAttr('size'),
 				name: _optDataAttr('name'),
 				progress: _optDataAttr('progress'),
+				list: _optDataAttr('list'),
 				file: {
 					tpl: _optDataAttr('file.tpl'),
 					progress: _optDataAttr('file.progress'),
@@ -131,8 +137,8 @@
 			onFileProgress: noop,
 			onFileComplete: noop,
 
-			onRemove: null,
-			onRemoveCompleted: null
+			onFileRemove: null,
+			onFileRemoveCompleted: null
 		};
 
 		$.extend(true, this.options, options); // deep extend
@@ -171,12 +177,9 @@
 		// Controls
 		var ctrl = options.elements.ctrl;
 		if( ctrl ){
-			if( ctrl.reset ){
-				this.$el.on('click.fileapi', ctrl.reset, _bind(this, this._onReset));
-			}
-			if( ctrl.upload ){
-				this.$el.on('click.fileapi', ctrl.upload, _bind(this, this._onSubmit));
-			}
+			this._listen('click', ctrl.reset, _bind(this, this._onReset));
+			this._listen('click', ctrl.upload, _bind(this, this._onSubmit));
+			this._listen('click', ctrl.abort, _bind(this, this._onAbort));
 		}
 
 		// Drag'n'Drop
@@ -315,7 +318,7 @@
 			;
 
 			if( 'file.remove' == act ){
-				if( file && this.emit('remove'+(file.complete ? 'Completed' : ''), file) ){
+				if( file && this.emit('removeFile'+(file.complete ? 'Completed' : ''), file) ){
 					this.remove(uid);
 				}
 			}
@@ -331,14 +334,31 @@
 			}
 		},
 
+		_listen: function (name, selector, fn){
+			selector && _each($.trim(selector).split(','), function (selector){
+				selector = $.trim(selector);
+
+				if( _isID(selector) ){
+					$(selector).on(name+'.fileapi', fn);
+				} else {
+					this.$el.on(name+'.fileapi', selector, fn);
+				}
+			}, this);
+		},
+
 		_onSubmit: function (evt){
-			this.upload();
 			evt.preventDefault();
+			this.upload();
 		},
 
 		_onReset: function (evt){
-			this.clear();
 			evt.preventDefault();
+			this.clear();
+		},
+
+		_onAbort: function (evt){
+			evt.preventDefault();
+			this.abort();
 		},
 
 		_onDrop: function (files){
@@ -530,7 +550,7 @@
 				if( $files.length && !this.$file(uid).length ){
 					var html = this.itemTplFn({
 						  $idx: offset + i
-						, uid:  file.uid
+						, uid:  uid
 						, name: file.name
 						, type: file.type
 						, size: file.size
@@ -547,7 +567,7 @@
 
 
 			this.$elem('name').text( name.join(', ') );
-			this.$elem('size').text( this._getFormatedSize(size) );
+			this.$elem('size').text( size ? this._getFormatedSize(size) : '' );
 
 
 			this.$elem('empty.show').toggle( empty );
@@ -568,10 +588,10 @@
 			;
 
 			// Upload control
-			this._disableElem('ctrl.upload', empty || active);
+			this._disableElem('ctrl.upload', emptyQueue || active);
 
 			// Reset control
-			this._disableElem('ctrl.reset', empty || active);
+			this._disableElem('ctrl.reset', emptyQueue || active);
 
 			// Abort control
 			this._disableElem('ctrl.abort', !active);
@@ -845,6 +865,12 @@
 			}
 		},
 
+		abort: function (text){
+			if( this.active && this.xhr ){
+				this.xhr.abort(text);
+			}
+		},
+
 		crop: function (file, coords){
 			var
 				  uid = api.uid(file)
@@ -981,11 +1007,19 @@
 			return	this;
 		},
 
+		toString: function (){
+			return	'[jQuery.FileAPI object]';
+		},
+
 		destroy: function (){
 			this.$el
 				.off('.fileapi')
 				.removeData('fileapi')
 			;
+
+			_each(this.options.elements.ctrl, function (selector){
+				_isID(selector) && $(selector).off('click.fileapi');
+			});
 		}
 	};
 
@@ -1055,7 +1089,7 @@
 				}
 				return	res === void 0 ? this : res;
 			}
-		} else {
+		} else if( options == null || typeof options == 'object' ){
 			this.data('fileapi', new Plugin(this, options));
 		}
 

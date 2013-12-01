@@ -5,7 +5,12 @@
 		"grunt": "~0.4.0",
 		"grunt-version": "*",
 		"grunt-contrib-jshint": "~0.2.0",
-		"grunt-contrib-uglify": "*"
+		"grunt-contrib-uglify": "*",
+
+		"eventemitter2": "~0.4.9",
+		"semver": "~1.0.14",
+		"temporary": "~0.0.4",
+		"phantomjs": "latest"
 	},
 	"description": "jQuery plugin for FileAPI (multiupload, image upload, crop, resize and etc.)",
 	"main": "jquery.fileapi.js",

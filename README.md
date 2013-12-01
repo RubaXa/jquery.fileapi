@@ -340,6 +340,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+### 0.3.0
+ * + QUnit tests
+ * + `onFileRemove` and `onRemoveCompleted` events
+ * + `abort(text)` method
  * + `remove(file)` method
 
 ### 0.2.0
