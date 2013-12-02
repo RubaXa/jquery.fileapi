@@ -267,6 +267,24 @@ $('#box').fileapi({
 });
 ```
 
+### onFileRemove(evt`:$.Event`, file`:File`)
+Removing a file from the queue
+```js
+function (evt, file){
+	if( !confirm('Remove "'+file.name+'"?') ){
+		reutrn false;
+	}
+}
+```
+
+### onFileRemoveCompleted(evt`:$.Event`, file`:File`)
+Removing a file from the queue
+```js
+function (evt, file){
+	// Send ajax-request
+	$.post('/remove-ctrl.php', { uid: FileAPI.uid(file) });
+}
+```
 
 
 ## Cropper
