@@ -345,6 +345,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * + `onFileRemove` and `onRemoveCompleted` events
  * + `abort(text)` method
  * + `remove(file)` method
+ * fixed `serialize()` method
 
 ### 0.2.0
  * enhancement `ui event` in onSelect

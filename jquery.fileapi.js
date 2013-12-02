@@ -811,7 +811,7 @@
 			this.$el.find(':input').each(function(name, node){
 				if(
 					   (name = node.name) && !node.disabled
-					&& (node.checked || /select|textarea|input/i.test(node.nodeName) && /checkbox|radio/i.test(node.type))
+					&& (node.checked || /select|textarea|input/i.test(node.nodeName) && !/checkbox|radio|file/i.test(node.type))
 				){
 					val	= $(node).val();
 					if( obj[name] !== void 0 ){
