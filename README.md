@@ -272,7 +272,7 @@ Removing a file from the queue
 ```js
 function (evt, file){
 	if( !confirm('Remove "'+file.name+'"?') ){
-		reutrn false;
+		return false;
 	}
 }
 ```
