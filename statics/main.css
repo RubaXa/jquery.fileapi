@@ -317,7 +317,7 @@ h2 {
 	border: 2px solid #aaa;
 	display: inline-block;
 	position: relative;
-	background: url('http://expomap.ru/images/users/no-userpic-big.gif') no-repeat;
+	background: url('uploader/userpic.gif') no-repeat;
 	background-size: cover;
 }
 	.webcam .btn,
@@ -332,7 +332,7 @@ h2 {
 
 .webcam {
 	background-size: auto;
-	background-image: url('https://cdn1.iconfinder.com/data/icons/windows-8-metro-style/128/integrated_webcam.png');
+	background-image: url('uploader/webcam.png');
 	background-position: center 10px;
 }
 
@@ -416,7 +416,7 @@ h2 {
 		cursor: pointer;
 		margin: -16px 0 0 -16px;
 		position: absolute;
-		background: url('http://cdn1.iconfinder.com/data/icons/duesseldorf/32/refresh.png');
+		background: url('uploader/rotate.png');
 	}
 
 	.b-thumb__preview {
@@ -429,7 +429,7 @@ h2 {
 		.b-thumb__preview__pic {
 			width: 100%;
 			height: 100%;
-			background: url('http://www.rubaxa.org/screenshot/b27ae1b0bcdcd13a6728774ed505.png') 50% 50% no-repeat;
+			background: url('uploader/file-icon.png') 50% 50% no-repeat;
 		}
 
 	.b-thumb__name {
@@ -583,53 +583,6 @@ h2 {
 			background-color: orange;
 		}
 
-
-
-
-
-.b-thumb {
-	float: left;
-	margin: 3px;
-	padding: 5px;
-	overflow: hidden;
-	position: relative;
-	box-shadow: 0 0 2px rgba(0,0,0,.4);
-	background-color: #fff;
-}
-	.b-thumb__rotate {
-		top: 40%;
-		left: 50%;
-		width: 32px;
-		height: 32px;
-		cursor: pointer;
-		margin: -16px 0 0 -16px;
-		position: absolute;
-		background: url('http://cdn1.iconfinder.com/data/icons/duesseldorf/32/refresh.png');
-	}
-
-	.b-thumb__preview {
-		width: 80px;
-		height: 80px;
-		-moz-transition: -moz-transform .2s ease-in;
-	}
-		.b-thumb__preview__pic {
-			width: 100%;
-			height: 100%;
-			xbackground: url('http://www.rubaxa.org/screenshot/b27ae1b0bcdcd13a6728774ed505.png') 50% 50% no-repeat;
-		}
-
-	.b-thumb__name {
-		width: 80px;
-		overflow: hidden;
-		font-size: 12px;
-	}
-
-	.b-thumb__progress {
-		top: 75px;
-		left: 10px;
-		right: 10px;
-		position: absolute;
-	}
 
 
 .themodal-overlay {
