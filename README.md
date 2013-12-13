@@ -1,5 +1,5 @@
 # $.fn.fileapi
-jQuery plugin for FileAPI (multiupload, image upload, crop, resize and etc.)
+jQuery plugin for [FileAPI](https://github.com/mailru/FileAPI/) (multiupload, image upload, crop, resize and etc.)
 
 
 ## Install
