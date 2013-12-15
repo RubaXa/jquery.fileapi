@@ -223,6 +223,16 @@ function (evt, uiEvt){
 }
 ```
 
+### onFilePrepare`:Function`(evt`:$.Event`, uiEvt`:Object`)
+Preparation of data before uploading.
+
+```js
+function (evt, uiEvt){
+	var file = uiEvt.file;
+	uiEvt.options.data.fileType = file.type;
+}
+```
+
 ### onFileUpload`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Start upload the same file.
 
@@ -358,6 +368,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+### 0.3.1
+ * fixed `crop` method
+ * + `onFilePrepare` event
+
 ### 0.3.0
  * + QUnit tests
  * + `onFileRemove` and `onRemoveCompleted` events

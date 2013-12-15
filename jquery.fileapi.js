@@ -133,6 +133,7 @@
 			onProgress: noop,
 			onComplete: noop,
 
+			onFilePrepare: noop,
 			onFileUpload: noop,
 			onFileProgress: noop,
 			onFileComplete: noop,
@@ -455,10 +456,13 @@
 				, deg	= this._rotate[uid]
 				, crop	= this._crop[uid]
 				, resize = this._resize[uid]
+				, evt = this._getUploadEvent()
 			;
 
 			if( deg || crop ){
 				var trans = opts.imageTransform = opts.imageTransform || {};
+				deg = deg || (this.options.imageAutoOrientation ? 'auto' : void 0);
+
 				if( $.isEmptyObject(trans) || _isOriginTransform(trans) ){
 					_extend(trans, resize);
 
@@ -474,6 +478,11 @@
 					});
 				}
 			}
+
+			evt.file = file;
+			evt.options = opts;
+
+			this.emit('filePrepare', evt);
 		},
 
 		_onFileUploadEvent: function (evt, ui){
@@ -884,7 +893,6 @@
 					if( err ){
 						this.emit('previewError', [err, file]);
 					} else {
-						// @todo error emit
 						if( !$el.find('div>div').length ){
 							$el.html(
 								$('<div><div></div></div>')
@@ -904,7 +912,7 @@
 						var
 							  pw = preview.width, ph = preview.height
 							, mx = pw, my = ph
-							, rx = pw/coords.w, ry = ph/coords.h
+							, rx = pw/coords.rw, ry = ph/coords.rh
 						;
 						
 						if( preview.keepAspectRatio ){
@@ -916,19 +924,19 @@
 							} else { // image is bigger than preview (scale)
 								if( rx < ry ){
 									ry = rx;
-									my = pw * coords.h / coords.w;
+									my = pw * coords.rh / coords.rw;
 								} else {
 									rx = ry;
-									mx = ph * coords.w / coords.h;
+									mx = ph * coords.rw / coords.rh;
 								}
 							}
 						}
 
 						$el.find('>div>div').css({
-							  width:	Math.round(rx * info.width)
-							, height:	Math.round(ry * info.height)
-							, marginLeft:	-Math.round(rx * coords.x)
-							, marginTop:	-Math.round(ry * coords.y)
+							  width:	Math.round(rx * info[coords.flip ? 'height' : 'width'])
+							, height:	Math.round(ry * info[coords.flip ? 'width' : 'height'])
+							, marginLeft:	-Math.round(rx * coords.rx)
+							, marginTop:	-Math.round(ry * coords.ry)
 						});
 
 						if( preview.keepAspectRatio ){ // create side gaps
@@ -1200,6 +1208,8 @@
 
 						, selWidth = minSide
 						, selHeight = minSide / ratio
+
+						, deg = FileAPI.Image.exifOrientation[info.exif && info.exif.Orientation] || 0
 					;
 
 					if( selection ){
@@ -1220,16 +1230,36 @@
 					_each(['onSelect', 'onChange'], function (name, fn){
 						if( fn = opts[name] ){
 							opts[name] = function (coords){
-								var fw = info.width/img.width, fh = info.height/img.height;
+								var
+									  flip = deg % 180
+									, ow = info.width
+									, oh = info.height
+									, fx = coords.x/img.width
+									, fy = coords.y/img.height
+									, fw = coords.w/img.width
+									, fh = coords.h/img.height
+									, x = ow * (flip ?  fy : fx)
+									, y = oh * (flip ? 1 - (coords.x + coords.w)/img.width : fy)
+									, w = ow * (flip ? fh : fw)
+									, h = oh * (flip ? fw : fh)
+								;
+
+
 								fn({
-									  x: (coords.x * fw + 0.5)|0
-									, y: (coords.y * fh + 0.5)|0
-									, w: (coords.w * fw + 0.5)|0
-									, h: (coords.h * fh + 0.5)|0
+									  x: x
+									, y: y
+									, w: w
+									, h: h
+									, rx: fx * (flip ? oh : ow)
+									, ry: fy * (flip ? ow : oh)
+									, rw: fw * (flip ? oh : ow)
+									, rh: fh * (flip ? ow : oh)
 									, lx: coords.x // local coords
 									, ly: coords.y
 									, lw: coords.w
 									, lh: coords.h
+									, deg: deg
+									, flip: flip
 								});
 							};
 						}

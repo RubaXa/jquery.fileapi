@@ -446,18 +446,6 @@ h2 {
 	}
 
 
-.themodal-overlay {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	top: 0;
-	right: 0;
-	z-index: 100000;
-	overflow: auto;
-	background-color: rgba(0, 0, 0, 0.5);
-}
-
-
 
 .btn {
 	cursor: pointer;

@@ -62,8 +62,10 @@ module('jQuery.FileAPI');
 
 		var
 			  files
+			, prepareIdx = 0
+			, onFileComplete = false
 			, onTestedEvents = {}
-			, testingEvents = 'Upload Progress FileUpload FileProgress FileComplete'
+			, testingEvents = 'Upload Progress FilePrepare FileUpload FileProgress FileComplete'
 		;
 
 
@@ -71,6 +73,7 @@ module('jQuery.FileAPI');
 			.fileapi('destroy')
 			.fileapi({
 				url: serverUrl,
+				data: {},
 				onSelect: function (evt, ui){
 					files = ui.files
 				},
@@ -93,6 +96,8 @@ module('jQuery.FileAPI');
 						ok(onTestedEvents[name.toLowerCase()], name);
 					});
 
+					ok(onFileComplete, 'filecomplete listener');
+
 					setTimeout(function (){
 						start();
 						ok($('#uploadBtn').prop('disabled'), 'upload after "complete"');
@@ -103,6 +108,13 @@ module('jQuery.FileAPI');
 			})
 			.on(testingEvents.toLowerCase(), function (evt){
 				onTestedEvents[evt.type] = true;
+			})
+			.on('fileprepare', function (evt, ui){
+				ui.options.data.foo = ++prepareIdx;
+			})
+			.on('filecomplete', function (evt, ui){
+				onFileComplete = true;
+				equal(ui.result.data._REQUEST.foo, prepareIdx, "data.foo: "+prepareIdx);
 			})
 		;
 
