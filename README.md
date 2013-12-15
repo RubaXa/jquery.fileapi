@@ -1,5 +1,5 @@
 # $.fn.fileapi
-jQuery plugin for FileAPI (multiupload, image upload, crop, resize and etc.)
+jQuery plugin for [FileAPI](https://github.com/mailru/FileAPI/) (multiupload, image upload, crop, resize and etc.)
 
 
 ## Install
@@ -75,7 +75,7 @@ otherwise it is ignored. The value must be a comma-separated list of unique cont
 
 
 ### duplicate`:Boolean`
-The ability to download duplicates, default `false`.
+The ability to upload duplicates, default `false`.
 
 
 ### paramName`:String`
