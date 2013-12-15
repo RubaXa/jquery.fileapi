@@ -306,6 +306,9 @@
 				if( data.all.length && this.emit('select', data) !== false ){
 					this.add(data.files, this.options.clearOnSelect);
 				}
+
+				// Reset input
+				FileAPI.reset(evt.target);
 			}));
 		},
 
