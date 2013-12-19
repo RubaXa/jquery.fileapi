@@ -302,9 +302,14 @@
 		},
 
 		_onSelect: function (evt){
+			if( this.options.clearOnSelect ){
+				this.queue = [];
+				this.files = [];
+			}
+
 			this._getFiles(evt, _bind(this, function (data){
 				if( data.all.length && this.emit('select', data) !== false ){
-					this.add(data.files, this.options.clearOnSelect);
+					this.add(data.files);
 				}
 
 				// Reset input
