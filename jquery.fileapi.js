@@ -423,8 +423,12 @@
 				file.complete = true;
 			}
 
-			if( this.options.dataType == 'json' ){
-				evt.result = $.parseJSON(evt.result);
+			if( !err && (this.options.dataType == 'json') ){
+				try {
+					evt.result = $.parseJSON(evt.result);
+				} catch (err){
+					evt.error = err;
+				}
 			}
 
 			this.emit(prefix+'Complete', evt);
