@@ -189,7 +189,9 @@
 									$('.js-img', overlay).webcam({
 										width: 320,
 										height: 240,
-										error: function (){
+										error: function (err){
+											// err — https://developer.mozilla.org/en-US/docs/Web/API/Navigator.getUserMedia
+											$.modal().close();
 											alert("Unfortunately, your browser does not support webcam.");
 										},
 										success: function (webcam){
