@@ -413,8 +413,6 @@
 					;
 				})
 				.click(function (){
-					$(this).off();
-
 					if( !FileAPI.support.media ){
 						$blind.animate({ top: -$(this).height() }, 'slow', 'easeOutQuart');
 					}
@@ -423,6 +421,7 @@
 						if( err ){
 							alert("Unfortunately, your browser does not support webcam.");
 						} else {
+							$('.splash').off();
 							$blind.animate({ top: -$(this).height() }, 'slow', 'easeOutQuart');
 						}
 					});
