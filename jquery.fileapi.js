@@ -707,10 +707,11 @@
 					this.xhr.append(files);
 					this._redraw(clear);
 				}
-				else if( this.options.autoUpload ){
-					this.upload();
-				} else {
+				else {
 					this._redraw(clear);
+					if( this.options.autoUpload ){
+						this.upload();
+					}
 				}
 			}
 		},
