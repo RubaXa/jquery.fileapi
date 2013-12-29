@@ -1,6 +1,6 @@
 {
 	"name": "jquery.fileapi",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"devDependencies": {
 		"grunt": "~0.4.0",
 		"grunt-version": "*",
@@ -15,7 +15,7 @@
 	"description": "jQuery plugin for FileAPI (multiupload, image upload, crop, resize and etc.)",
 	"main": "jquery.fileapi.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "grunt test"
 	},
 	"repository": {
 		"type": "git",

@@ -536,7 +536,7 @@
 			}
 		},
 
-		_redraw: function (){
+		_redraw: function (clear/**Boolean*/){
 			var
 				  files = this.files
 				, active = !!this.active
@@ -549,6 +549,9 @@
 				, preview = this.option('elements.file.preview')
 			;
 
+			if( clear ){
+				this.$files.empty();
+			}
 
 			_each(files, function (file, i){
 				var uid = api.uid(file);
@@ -702,12 +705,12 @@
 
 				if( this.active ){
 					this.xhr.append(files);
-					this._redraw();
+					this._redraw(clear);
 				}
 				else if( this.options.autoUpload ){
 					this.upload();
 				} else {
-					this._redraw();
+					this._redraw(clear);
 				}
 			}
 		},
@@ -1105,7 +1108,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.3.1';
+	$.fn.fileapi.version = '0.3.2';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
