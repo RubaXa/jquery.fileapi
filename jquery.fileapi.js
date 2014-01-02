@@ -580,6 +580,8 @@
 						, size: file.size
 						, sizeText: this._getFormatedSize(file.size)
 					});
+					
+					file.$el = html;
 
 					$files.append( $(html).attr(_dataFileId, uid) );
 
