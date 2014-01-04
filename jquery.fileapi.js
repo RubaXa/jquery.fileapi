@@ -582,6 +582,7 @@
 					});
 
 					$files.append( $(html).attr(_dataFileId, uid) );
+					file.$el = this.$file(uid);
 
 					if( preview.el ){
 						this._makeFilePreview(uid, file, preview);
