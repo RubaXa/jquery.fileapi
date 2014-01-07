@@ -302,10 +302,18 @@
 		},
 
 		_onSelect: function (evt){
+			if( this.options.clearOnSelect ){
+				this.queue = [];
+				this.files = [];
+			}
+
 			this._getFiles(evt, _bind(this, function (data){
 				if( data.all.length && this.emit('select', data) !== false ){
-					this.add(data.files, this.options.clearOnSelect);
+					this.add(data.files);
 				}
+
+				// Reset input
+				FileAPI.reset(evt.target);
 			}));
 		},
 
@@ -415,8 +423,12 @@
 				file.complete = true;
 			}
 
-			if( this.options.dataType == 'json' ){
-				evt.result = $.parseJSON(evt.result);
+			if( !err && (this.options.dataType == 'json') ){
+				try {
+					evt.result = $.parseJSON(evt.result);
+				} catch (err){
+					evt.error = err;
+				}
 			}
 
 			this.emit(prefix+'Complete', evt);
@@ -570,6 +582,7 @@
 					});
 
 					$files.append( $(html).attr(_dataFileId, uid) );
+					file.$el = this.$file(uid);
 
 					if( preview.el ){
 						this._makeFilePreview(uid, file, preview);
