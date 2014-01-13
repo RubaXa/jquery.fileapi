@@ -368,6 +368,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+* + FileAPI v2.0.3
+* #35: + `imageOriginal` option
+
 ### 0.3.1
  * fixed `crop` method
  * + `onFilePrepare` event

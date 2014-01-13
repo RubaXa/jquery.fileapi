@@ -74,6 +74,7 @@
 			},
 			sizeFormat: '0.00',
 
+			imageOriginal: true,
 			imageTransform: 0,
 			imageAutoOrientation: !!FileAPI.support.exif,
 
@@ -864,13 +865,14 @@
 					, opts = this.options
 					, files = {}
 					, uploadOpts = {
-						  url:   opts.url
-						, data:  _extend({}, this.serialize(), opts.data)
+						  url: opts.url
+						, data: _extend({}, this.serialize(), opts.data)
 						, headers: opts.headers
 						, files: files
 						, chunkSize: opts.chunkSize|0
 						, chunkUploadRetry: opts.chunkUploadRetry|0
 						, prepare: _bind(this, this._onFileUploadPrepare)
+						, imageOriginal: opts.imageOriginal
 						, imageTransform: opts.imageTransform
 					}
 				;
