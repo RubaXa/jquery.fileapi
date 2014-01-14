@@ -473,7 +473,7 @@
 			;
 
 			if( deg || crop ){
-				var trans = opts.imageTransform = opts.imageTransform || {};
+				var trans = _extend({}, opts.imageTransform || {});
 				deg = deg || (this.options.imageAutoOrientation ? 'auto' : void 0);
 
 				if( $.isEmptyObject(trans) || _isOriginTransform(trans) ){
@@ -484,8 +484,7 @@
 				}
 				else {
 					_each(trans, function (opts){
-						_extend(opts, resize);
-
+						opts = _extend({}, opts, resize);
 						opts.crop	= crop;
 						opts.rotate	= deg;
 					});
