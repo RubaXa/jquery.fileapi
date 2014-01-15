@@ -16,20 +16,57 @@ module('jQuery.FileAPI');
 	var $multiple = $('#multiple');
 
 
+	function checkDisabledCtrls(disabled, postfix){
+		equal($('#uploadBtn').prop('disabled'), disabled, 'upload - '+postfix);
+		equal($el.find('[data-fileapi="ctrl.reset"]').prop('disabled'), disabled, 'reset - '+postfix);
+
+		equal($el.find('[data-fileapi="empty.show"]').is(':visible'), disabled, 'empty.show - '+postfix);
+		equal($el.find('[data-fileapi="empty.hide"]').is(':visible'), !disabled, 'empty.hide - '+postfix);
+
+		equal($el.find('[data-fileapi="emptyQueue.show"]').is(':visible'), disabled, 'emptyQueue.show - '+postfix);
+		equal($el.find('[data-fileapi="emptyQueue.hide"]').is(':visible'), !disabled, 'emptyQueue.hide - '+postfix);
+	}
+
+
+	function _checkFileListView(files, $files, postfix){
+		$files.each(function (i){
+			var $file = $(this), file = files[i];
+			equal($file.find('.idx').html(), i, '$idx - '+i+' - '+postfix);
+			equal($file.find('.uid').html(), FileAPI.uid(file), 'uid - '+i+' - '+postfix);
+			equal($file.find('.name').html(), file.name, 'name - '+i+' - '+postfix);
+			equal($file.find('.type').html(), file.type, 'type - '+i+' - '+postfix);
+			equal($file.find('.size').html(), file.size, 'size - '+i+' - '+postfix);
+		});
+	}
+
+
+	test('files options', function (){
+		$el.fileapi('destroy').fileapi({
+			url: serverUrl,
+			elements: {
+				ctrl: { upload: '#uploadBtn' },
+				file: {
+					preview: {
+						el: '.img',
+						width: 100,
+						height: 100
+					}
+				}
+			},
+			files:  ['./files/image.jpg', {
+				src:	'./files/dino.png',
+				type:	'image/png',
+				name:	'dino.png',
+				size:	315
+			}]
+		});
+
+		ok($('#uploadBtn').prop('disabled'), 'upload btn');
+		_checkFileListView($el.fileapi('files'), $el.find('[data-fileapi="list"]').children());
+	});
+
 
 	test('UI', function (){
-		function checkDisabledCtrls(disabled, postfix){
-			equal($('#uploadBtn').prop('disabled'), disabled, 'upload - '+postfix);
-			equal($el.find('[data-fileapi="ctrl.reset"]').prop('disabled'), disabled, 'reset - '+postfix);
-
-			equal($el.find('[data-fileapi="empty.show"]').is(':visible'), disabled, 'empty.show - '+postfix);
-			equal($el.find('[data-fileapi="empty.hide"]').is(':visible'), !disabled, 'empty.hide - '+postfix);
-
-			equal($el.find('[data-fileapi="emptyQueue.show"]').is(':visible'), disabled, 'emptyQueue.show - '+postfix);
-			equal($el.find('[data-fileapi="emptyQueue.hide"]').is(':visible'), !disabled, 'emptyQueue.hide - '+postfix);
-		}
-
-
 		function checkFiles(inpFiles, postfix){
 			ok(inpFiles.length > 0, 'files > 0 - '+postfix);
 			equal(files.length, inpFiles.length, 'selected files - '+postfix);
@@ -46,14 +83,7 @@ module('jQuery.FileAPI');
 			var $files = $el.find('[data-fileapi="list"]').children();
 			equal($files.length, files.length, 'list - '+postfix);
 
-			$files.each(function (i){
-				var $file = $(this), file = files[i];
-				equal($file.find('.idx').html(), i, '$idx - '+i+' - '+postfix);
-				equal($file.find('.uid').html(), FileAPI.uid(file), 'uid - '+i+' - '+postfix);
-				equal($file.find('.name').html(), file.name, 'name - '+i+' - '+postfix);
-				equal($file.find('.type').html(), file.type, 'type - '+i+' - '+postfix);
-				equal($file.find('.size').html(), file.size, 'size - '+i+' - '+postfix);
-			});
+			_checkFileListView(files, $files, postfix);
 		}
 
 

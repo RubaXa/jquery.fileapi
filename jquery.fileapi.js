@@ -159,7 +159,9 @@
 
 
 		this.$files = this.$elem('list');
-		this.itemTplFn = $.fn.fileapi.tpl( $('<div/>').append( this.$elem('file.tpl')).html() );
+
+		this.$fileTpl	= this.$elem('file.tpl');
+		this.itemTplFn	= $.fn.fileapi.tpl( $('<div/>').append( this.$elem('file.tpl') ).html() );
 
 
 		_each(options, function (value, option){
@@ -201,6 +203,24 @@
 		}
 
 		this.clear();
+
+		if( $.isArray(options.files) ){
+			this.files = $.map(options.files, function (file){
+				if( $.type(file) === 'string' ){
+					file = {
+						  src: file
+						, name: file
+						// @todo: use FileAPI.getMimeType (v2.1+)
+						, type: /jpe?g|png|bmp|git|tiff?/i.test(file) && 'image/'+file.split('.').pop()
+						, size: 0
+					};
+				}
+				file.complete = true;
+				return file;
+			});
+
+			this._redraw();
+		}
 	};
 
 
@@ -573,17 +593,25 @@
 				size += file.size;
 
 				if( $files.length && !this.$file(uid).length ){
-					var html = this.itemTplFn({
-						  $idx: offset + i
-						, uid:  uid
-						, name: file.name
-						, type: file.type
-						, size: file.size
-						, sizeText: this._getFormatedSize(file.size)
-					});
+					var
+						html = this.itemTplFn({
+							  $idx: offset + i
+							, uid:  uid
+							, name: file.name
+							, type: file.type
+							, size: file.size
+							, sizeText: this._getFormatedSize(file.size)
+						})
 
-					$files.append( $(html).attr(_dataFileId, uid) );
-					file.$el = this.$file(uid);
+						, $file = $(html).attr(_dataFileId, uid)
+					;
+
+					file.$el = $file;
+					$files.append( $file );
+
+					if( file.complete ){
+						this.$elem('file.complete.hide', $file).hide();
+					}
 
 					if( preview.el ){
 						this._makeFilePreview(uid, file, preview);
@@ -639,7 +667,7 @@
 			if( !_this._crop[uid] ){
 				if( /^image/.test(file.type) ){
 					var
-						  image = api.Image(file)
+						  image = api.Image(file.src || file)
 						, doneFn = function (){
 							image.get(function (err, img){
 								if( !_this._crop[uid] ){
@@ -1039,6 +1067,8 @@
 		},
 
 		destroy: function (){
+			this.$files.empty().append(this.$fileTpl);
+
 			this.$el
 				.off('.fileapi')
 				.removeData('fileapi')
@@ -1108,12 +1138,17 @@
 
 			if( typeof options == 'string' ){
 				var fn = plugin[options], res;
+
 				if( $.isFunction(fn) ){
 					res = fn.apply(plugin, _slice.call(arguments, 1));
 				}
 				else if( fn === void 0 ){
 					res = plugin.option(options, value);
 				}
+				else if( options === 'files' ){
+					res = fn;
+				}
+
 				return	res === void 0 ? this : res;
 			}
 		} else if( options == null || typeof options == 'object' ){
