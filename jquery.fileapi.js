@@ -610,6 +610,7 @@
 					$files.append( $file );
 
 					if( file.complete ){
+						this.$elem('file.upload.hide', $file).hide();
 						this.$elem('file.complete.hide', $file).hide();
 					}
 
