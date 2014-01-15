@@ -398,3 +398,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### 0.1.0
  * Inital commit
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/RubaXa/jquery.fileapi/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
