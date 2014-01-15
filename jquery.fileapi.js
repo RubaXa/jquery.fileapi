@@ -209,7 +209,7 @@
 				if( $.type(file) === 'string' ){
 					file = {
 						  src: file
-						, name: file
+						, name: file.split('/').pop()
 						// @todo: use FileAPI.getMimeType (v2.1+)
 						, type: /jpe?g|png|bmp|git|tiff?/i.test(file) && 'image/'+file.split('.').pop()
 						, size: 0
