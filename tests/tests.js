@@ -3,7 +3,7 @@ module('jQuery.FileAPI');
 (function (){
 	var serverUrl = 'http://rubaxa.org/FileAPI/server/ctrl.php';
 
-	QUnit.config.autostart = true;
+	QUnit.config.autostart = isPhantomJS;
 
 
 	FileAPI.event.on(startBtn, 'click', function (){
@@ -90,7 +90,7 @@ module('jQuery.FileAPI');
 						});
 					}, this);
 				},
-				onComplete: function (){
+				onComplete: function (evt, uiEvt){
 					FileAPI.each(testingEvents.split(' '), function (name){
 						ok(onTestedEvents['on'+name], 'on'+name);
 						ok(onTestedEvents[name.toLowerCase()], name);
@@ -110,11 +110,13 @@ module('jQuery.FileAPI');
 				onTestedEvents[evt.type] = true;
 			})
 			.on('fileprepare', function (evt, ui){
-				ui.options.data.foo = ++prepareIdx;
+				prepareIdx++;
+				ui.file.foo = prepareIdx;
+				ui.options.data.foo = prepareIdx;
 			})
 			.on('filecomplete', function (evt, ui){
 				onFileComplete = true;
-				equal(ui.result.data._REQUEST.foo, prepareIdx, "data.foo: "+prepareIdx);
+				equal(ui.result.data._REQUEST.foo, ui.file.foo, "data.foo: "+prepareIdx);
 			})
 		;
 
