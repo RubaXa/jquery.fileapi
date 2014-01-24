@@ -347,16 +347,18 @@
 				, prevent = true
 			;
 
-			if( 'file.remove' == act ){
-				if( file && this.emit('fileRemove'+(file.complete ? 'Completed' : ''), file) ){
-					this.remove(uid);
+			if( this.$file(uid).attr('disabled') ){
+				if( 'file.remove' == act ){
+					if( file && this.emit('fileRemove' + (file.complete ? 'Completed' : ''), file) ){
+						this.remove(uid);
+					}
 				}
-			}
-			else if( /^file\.rotate/.test(act)  ){
-				this.rotate(uid, (/ccw/.test(act) ? '-=90' : '+=90'));
-			}
-			else {
-				prevent = false;
+				else if( /^file\.rotate/.test(act) ){
+					this.rotate(uid, (/ccw/.test(act) ? '-=90' : '+=90'));
+				}
+				else {
+					prevent = false;
+				}
 			}
 
 			if( prevent ){
