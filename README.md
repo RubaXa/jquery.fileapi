@@ -336,8 +336,72 @@ $('#userpic').fileapi({
 });
 ```
 
+---
+
+
+## Customization
+
+```js
+$('#upload').fileapi({
+	multiple: true,
+
+	// Restores the list of files uploaded earlier.
+	files: [{
+		src: "http://path/to/filename.png",
+		type: "image/png",
+		name: "filename.png"
+		size: 31409,
+		data: { id: 999, token: "..." }
+	}],
+
+	// Remove a file from the upload queue
+	onFileRemove: function (evt, file){
+		if( !confirm("Are you sure?") ){
+			// Cancel remove
+			evt.preventDefault();
+		}
+	},
+
+	onFileComplete: function (evt, uiEvt){
+		var file = uiEvt.file;
+		var json = uiEvt.result;
+
+		file.data = {
+			id: json.id,
+			token: json.token
+		};
+	},
+
+	onFileRemoveCompleted: function (evt, file){
+		evt.preventDefault();
+
+		file.$el
+			.attr('disabled', true)
+			.addClass('my_disabled')
+		;
+
+		new ModalConfirm('Delete "'+file.name+'"?')
+			.then(function (){
+				$.post('/api/remove', file.data);
+
+				$('#upload').fileapi("remove", file);
+				// or so
+				evt.widget.remove(file);
+			}, function (){
+				file.$el
+					.attr('disabled', false)
+					.removeClass('my_disabled')
+				;
+			})
+		;
+	}
+
+})
+```
+
 
 ---
+
 
 
 ## MIT LICENSE
@@ -368,6 +432,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+* support `disabled` dom-attribute
 * #34: fixed `imageTransform`
 * + FileAPI v2.0.3
 * #35: + `imageOriginal` option
