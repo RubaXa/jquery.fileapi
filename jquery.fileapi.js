@@ -74,6 +74,7 @@
 			},
 			sizeFormat: '0.00',
 
+			imageOriginal: true,
 			imageTransform: 0,
 			imageAutoOrientation: !!FileAPI.support.exif,
 
@@ -158,7 +159,9 @@
 
 
 		this.$files = this.$elem('list');
-		this.itemTplFn = $.fn.fileapi.tpl( $('<div/>').append( this.$elem('file.tpl')).html() );
+
+		this.$fileTpl	= this.$elem('file.tpl');
+		this.itemTplFn	= $.fn.fileapi.tpl( $('<div/>').append( this.$elem('file.tpl') ).html() );
 
 
 		_each(options, function (value, option){
@@ -200,6 +203,24 @@
 		}
 
 		this.clear();
+
+		if( $.isArray(options.files) ){
+			this.files = $.map(options.files, function (file){
+				if( $.type(file) === 'string' ){
+					file = {
+						  src: file
+						, name: file.split('/').pop()
+						// @todo: use FileAPI.getMimeType (v2.1+)
+						, type: /jpe?g|png|bmp|git|tiff?/i.test(file) && 'image/'+file.split('.').pop()
+						, size: 0
+					};
+				}
+				file.complete = true;
+				return file;
+			});
+
+			this._redraw();
+		}
 	};
 
 
@@ -326,16 +347,18 @@
 				, prevent = true
 			;
 
-			if( 'file.remove' == act ){
-				if( file && this.emit('fileRemove'+(file.complete ? 'Completed' : ''), file) ){
-					this.remove(uid);
+			if( this.$file(uid).attr('disabled') ){
+				if( 'file.remove' == act ){
+					if( file && this.emit('fileRemove' + (file.complete ? 'Completed' : ''), file) ){
+						this.remove(uid);
+					}
 				}
-			}
-			else if( /^file\.rotate/.test(act)  ){
-				this.rotate(uid, (/ccw/.test(act) ? '-=90' : '+=90'));
-			}
-			else {
-				prevent = false;
+				else if( /^file\.rotate/.test(act) ){
+					this.rotate(uid, (/ccw/.test(act) ? '-=90' : '+=90'));
+				}
+				else {
+					prevent = false;
+				}
 			}
 
 			if( prevent ){
@@ -472,7 +495,7 @@
 			;
 
 			if( deg || crop ){
-				var trans = opts.imageTransform = opts.imageTransform || {};
+				var trans = $.extend(true, {}, opts.imageTransform || {});
 				deg = deg || (this.options.imageAutoOrientation ? 'auto' : void 0);
 
 				if( $.isEmptyObject(trans) || _isOriginTransform(trans) ){
@@ -483,12 +506,12 @@
 				}
 				else {
 					_each(trans, function (opts){
-						_extend(opts, resize);
-
 						opts.crop	= crop;
 						opts.rotate	= deg;
 					});
 				}
+
+				opts.imageTransform = trans;
 			}
 
 			evt.file = file;
@@ -572,17 +595,26 @@
 				size += file.size;
 
 				if( $files.length && !this.$file(uid).length ){
-					var html = this.itemTplFn({
-						  $idx: offset + i
-						, uid:  uid
-						, name: file.name
-						, type: file.type
-						, size: file.size
-						, sizeText: this._getFormatedSize(file.size)
-					});
+					var
+						html = this.itemTplFn({
+							  $idx: offset + i
+							, uid:  uid
+							, name: file.name
+							, type: file.type
+							, size: file.size
+							, sizeText: this._getFormatedSize(file.size)
+						})
 
-					$files.append( $(html).attr(_dataFileId, uid) );
-					file.$el = this.$file(uid);
+						, $file = $(html).attr(_dataFileId, uid)
+					;
+
+					file.$el = $file;
+					$files.append( $file );
+
+					if( file.complete ){
+						this.$elem('file.upload.hide', $file).hide();
+						this.$elem('file.complete.hide', $file).hide();
+					}
 
 					if( preview.el ){
 						this._makeFilePreview(uid, file, preview);
@@ -638,7 +670,7 @@
 			if( !_this._crop[uid] ){
 				if( /^image/.test(file.type) ){
 					var
-						  image = api.Image(file)
+						  image = api.Image(file.src || file)
 						, doneFn = function (){
 							image.get(function (err, img){
 								if( !_this._crop[uid] ){
@@ -864,13 +896,14 @@
 					, opts = this.options
 					, files = {}
 					, uploadOpts = {
-						  url:   opts.url
-						, data:  _extend({}, this.serialize(), opts.data)
+						  url: opts.url
+						, data: _extend({}, this.serialize(), opts.data)
 						, headers: opts.headers
 						, files: files
 						, chunkSize: opts.chunkSize|0
 						, chunkUploadRetry: opts.chunkUploadRetry|0
 						, prepare: _bind(this, this._onFileUploadPrepare)
+						, imageOriginal: opts.imageOriginal
 						, imageTransform: opts.imageTransform
 					}
 				;
@@ -1037,6 +1070,8 @@
 		},
 
 		destroy: function (){
+			this.$files.empty().append(this.$fileTpl);
+
 			this.$el
 				.off('.fileapi')
 				.removeData('fileapi')
@@ -1106,12 +1141,17 @@
 
 			if( typeof options == 'string' ){
 				var fn = plugin[options], res;
+
 				if( $.isFunction(fn) ){
 					res = fn.apply(plugin, _slice.call(arguments, 1));
 				}
 				else if( fn === void 0 ){
 					res = plugin.option(options, value);
 				}
+				else if( options === 'files' ){
+					res = fn;
+				}
+
 				return	res === void 0 ? this : res;
 			}
 		} else if( options == null || typeof options == 'object' ){
