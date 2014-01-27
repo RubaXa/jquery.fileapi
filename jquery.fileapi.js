@@ -347,7 +347,7 @@
 				, prevent = true
 			;
 
-			if( this.$file(uid).attr('disabled') ){
+			if( !this.$file(uid).attr('disabled') ){
 				if( 'file.remove' == act ){
 					if( file && this.emit('fileRemove' + (file.complete ? 'Completed' : ''), file) ){
 						this.remove(uid);
