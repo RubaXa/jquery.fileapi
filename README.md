@@ -255,15 +255,15 @@ function (evt, uiEvt){
 
 ### onComplete`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Completion of the entire uploading.
+
+### onFileComplete`:Function`(evt`:$.Event`, uiEvt`:Object`)
+Completion of uploading the file.
 ```js
 function (evt, uiEvt){
 	var error = uiEvt.error;
 	var result = uiEvt.result; // server response
 }
 ```
-
-### onFileComplete`:Function`(evt`:$.Event`, uiEvt`:Object`)
-Completion of uploading the file.
 
 ### onDrop`:Function`(evt`:$.Event`, data`:FilesObject`)
 Retrieve file List, takes two arguments.
