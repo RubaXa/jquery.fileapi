@@ -255,15 +255,15 @@ function (evt, uiEvt){
 
 ### onComplete`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Completion of the entire uploading.
+
+### onFileComplete`:Function`(evt`:$.Event`, uiEvt`:Object`)
+Completion of uploading the file.
 ```js
 function (evt, uiEvt){
 	var error = uiEvt.error;
 	var result = uiEvt.result; // server response
 }
 ```
-
-### onFileComplete`:Function`(evt`:$.Event`, uiEvt`:Object`)
-Completion of uploading the file.
 
 ### onDrop`:Function`(evt`:$.Event`, data`:FilesObject`)
 Retrieve file List, takes two arguments.
@@ -467,3 +467,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ### 0.1.0
  * Inital commit
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/RubaXa/jquery.fileapi/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+

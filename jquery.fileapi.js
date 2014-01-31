@@ -39,7 +39,7 @@
 
 
 	var Plugin = function (el, options){
-		this.$el = el = $(el).on('change.fileapi', _bind(this, this._onSelect));
+		this.$el = el = $(el).on('change.fileapi', 'input[type="file"]', _bind(this, this._onSelect));
 		this.el  = el[0];
 
 		this._options = {}; // previous options
