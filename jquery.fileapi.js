@@ -1027,6 +1027,8 @@
 				_rotate[uid] = deg;
 			}
 
+			file.rotate = deg;
+
 			$el.css({
 				  '-webkit-transform': 'rotate('+deg+'deg)'
 				, '-moz-transform': 'rotate('+deg+'deg)'
@@ -1162,7 +1164,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.3.2';
+	$.fn.fileapi.version = '0.3.3';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
@@ -1248,7 +1250,11 @@
 			}
 
 			api.getInfo(file, function (err, info){
-				var Image = api.Image(file), maxSize = opts.maxSize;
+				var
+					  Image = api.Image(file)
+					, maxSize = opts.maxSize
+					, deg = file.rotate
+				;
 
 				if( maxSize ){
 					Image.resize(
@@ -1258,7 +1264,7 @@
 					);
 				}
 
-				Image.rotate('auto').get(function (err, img){
+				Image.rotate(deg === void 0 ? 'auto' : deg).get(function (err, img){
 					var
 						  selection = opts.selection
 						, minSide = Math.min(img.width, img.height)
