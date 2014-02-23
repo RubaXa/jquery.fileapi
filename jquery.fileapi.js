@@ -592,7 +592,7 @@
 				var uid = api.uid(file);
 
 				name.push(file.name);
-				size += file.size;
+				size += file.complete ? 0 : file.size;
 
 				if( $files.length && !this.$file(uid).length ){
 					var
