@@ -1274,8 +1274,8 @@
 									, ly: coords.y
 									, lw: coords.w
 									, lh: coords.h
-									, x2: coords.x2
-									, y2: coords.y2
+									, lx2: coords.x2
+									, ly2: coords.y2
 									, deg: deg
 									, flip: flip
 								});
