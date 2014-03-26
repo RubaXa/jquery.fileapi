@@ -930,7 +930,7 @@
 							, mx = pw, my = ph
 							, rx = pw/coords.rw, ry = ph/coords.rh
 						;
-						
+
 						if( preview.keepAspectRatio ){
 							if (rx > 1 && ry > 1){ // image is smaller than preview (no scale)
 								rx = ry = 1;
@@ -1274,6 +1274,8 @@
 									, ly: coords.y
 									, lw: coords.w
 									, lh: coords.h
+									, lx2: coords.x2
+									, ly2: coords.y2
 									, deg: deg
 									, flip: flip
 								});
