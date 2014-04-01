@@ -13,6 +13,7 @@ jQuery plugin for [FileAPI](https://github.com/mailru/FileAPI/) (multiupload, im
 	};
 </script>
 <script src="/js/jquery.fileapi/FileAPI/FileAPI.min.js"></script>
+<script src="/js/jquery.fileapi/FileAPI/FileAPI.exif.js"></script>
 <script src="/js/jquery.fileapi/jquery.fileapi.min.js"></script>
 ```
 
