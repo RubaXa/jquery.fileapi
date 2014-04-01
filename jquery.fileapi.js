@@ -591,7 +591,7 @@
 
 
 			this.$elem('name').text( name.join(', ') );
-			this.$elem('size').text( size ? this._getFormatedSize(size) : '' );
+			this.$elem('size').text( !emptyQueue ? this._getFormatedSize(size) : '' );
 
 
 			this.$elem('empty.show').toggle( empty );
@@ -1121,7 +1121,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.3.2';
+	$.fn.fileapi.version = '0.3.3';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
