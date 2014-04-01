@@ -1014,7 +1014,7 @@
 
 		rotate: function (file, deg){
 			var
-				  uid = typeof file == 'object' ? api.uid(file) : file
+				  uid = $.type(file) == 'string' ? file : api.uid(file)
 				, opts = this.options
 				, preview = opts.multiple ? this.option('elements.file.preview') : opts.elements.preview
 				, $el = (opts.multiple ? this.$file(uid) : this.$el).find(preview && preview.el)
@@ -1022,12 +1022,12 @@
 			;
 
 			if( /([+-])=/.test(deg) ){
-				deg = _rotate[uid] = (_rotate[uid] || 0) + (RegExp.$1 == '+' ? 1 : -1) * deg.substr(2);
+				_rotate[uid] = deg = (_rotate[uid] || 0) + (RegExp.$1 == '+' ? 1 : -1) * deg.substr(2);
 			} else {
 				_rotate[uid] = deg;
 			}
 
-			file.rotate = deg;
+			this._getFile(uid).rotate = deg;
 
 			$el.css({
 				  '-webkit-transform': 'rotate('+deg+'deg)'
