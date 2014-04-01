@@ -624,7 +624,7 @@
 
 
 			this.$elem('name').text( name.join(', ') );
-			this.$elem('size').text( size ? this._getFormatedSize(size) : '' );
+			this.$elem('size').text( !emptyQueue ? this._getFormatedSize(size) : '' );
 
 
 			this.$elem('empty.show').toggle( empty );
@@ -964,7 +964,7 @@
 							, mx = pw, my = ph
 							, rx = pw/coords.rw, ry = ph/coords.rh
 						;
-						
+
 						if( preview.keepAspectRatio ){
 							if (rx > 1 && ry > 1){ // image is smaller than preview (no scale)
 								rx = ry = 1;
@@ -1162,7 +1162,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.3.2';
+	$.fn.fileapi.version = '0.3.3';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
@@ -1315,6 +1315,8 @@
 									, ly: coords.y
 									, lw: coords.w
 									, lh: coords.h
+									, lx2: coords.x2
+									, ly2: coords.y2
 									, deg: deg
 									, flip: flip
 								});
