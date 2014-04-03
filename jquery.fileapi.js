@@ -391,8 +391,8 @@
 			return api.filter(this.files, function (file){ return api.uid(file) == uid; })[0];
 		},
 
-		_getUploadEvent: function (extra){
-			var xhr = this.xhr, evt = {
+		_getUploadEvent: function (xhr, extra){
+			var evt = {
 				  xhr: xhr
 				, file: xhr.currentFile
 				, files: xhr.files
@@ -401,18 +401,18 @@
 			return	_extend(evt, extra);
 		},
 
-		_emitUploadEvent: function (prefix){
-			var evt = this._getUploadEvent();
+		_emitUploadEvent: function (prefix, file, xhr){
+			var evt = this._getUploadEvent(xhr);
 			this.emit(prefix+'Upload', evt);
 		},
 
-		_emitProgressEvent: function (prefix, event){
-			var evt = this._getUploadEvent(event);
+		_emitProgressEvent: function (prefix, event, file, xhr){
+			var evt = this._getUploadEvent(xhr, event);
 			this.emit(prefix+'Progress', evt);
 		},
 
 		_emitCompleteEvent: function (prefix, err, xhr, file){
-			var evt = this._getUploadEvent({
+			var evt = this._getUploadEvent(xhr, {
 				  error: err
 				, status: xhr.status
 				, statusText: xhr.statusText
@@ -468,7 +468,7 @@
 				, deg	= this._rotate[uid]
 				, crop	= this._crop[uid]
 				, resize = this._resize[uid]
-				, evt = this._getUploadEvent()
+				, evt = this._getUploadEvent(this.xhr)
 			;
 
 			if( deg || crop ){

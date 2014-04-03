@@ -114,7 +114,8 @@ module('jQuery.FileAPI');
 			})
 			.on('filecomplete', function (evt, ui){
 				onFileComplete = true;
-				equal(ui.result.data._REQUEST.foo, prepareIdx, "data.foo: "+prepareIdx);
+				equal(ui.xhr.options.data.foo, prepareIdx, "xhr.options.data.foo: "+prepareIdx);
+				equal(ui.result.data._REQUEST.foo, prepareIdx, "result.foo: "+prepareIdx);
 			})
 		;
 
