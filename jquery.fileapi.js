@@ -394,8 +394,8 @@
 		_getUploadEvent: function (xhr, extra){
 			var evt = {
 				  xhr: xhr
-				, file: xhr.currentFile
-				, files: xhr.files
+				, file: this.xhr.currentFile
+				, files: this.xhr.files
 				, widget: this
 			};
 			return	_extend(evt, extra);
@@ -511,6 +511,8 @@
 				this.__fileId = uid;
 				this._$fileprogress = $progress = this.$elem('file.progress', $file);
 			}
+
+			console.log(uid, ui, $file);
 
 			if( type == 'progress' ){
 				$progress.stop().animate({ width: ui.loaded/ui.total*100 + '%' }, 300);
@@ -1121,7 +1123,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.3.3';
+	$.fn.fileapi.version = '0.3.4';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
