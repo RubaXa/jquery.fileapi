@@ -1172,7 +1172,7 @@
 			ret	= inst[options]();
 		}
 		else if( inst === false ){
-			api.log("[webcam.error] вoes not work.");
+			api.log("[webcam.error] does not work.");
 			ret = null;
 		}
 		else {
