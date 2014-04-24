@@ -130,6 +130,7 @@
 
 			onSelect: noop,
 
+			onBeforeUpload: noop,
 			onUpload: noop,
 			onProgress: noop,
 			onComplete: noop,
@@ -890,7 +891,7 @@
 		},
 
 		upload: function (){
-			if( !this.active ){
+			if( !this.active && this.emit('beforeUpload', { widget: this, files: this.queue }) ){
 				this.active = true;
 
 				var
