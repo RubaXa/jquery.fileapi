@@ -1,6 +1,6 @@
 {
 	"name": "jquery.fileapi",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"devDependencies": {
 		"grunt": "~0.4.0",
 		"grunt-version": "*",

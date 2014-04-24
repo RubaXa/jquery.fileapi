@@ -39,7 +39,7 @@
 
 
 	var Plugin = function (el, options){
-		this.$el = el = $(el).on('change.fileapi', _bind(this, this._onSelect));
+		this.$el = el = $(el).on('change.fileapi', 'input[type="file"]', _bind(this, this._onSelect));
 		this.el  = el[0];
 
 		this._options = {}; // previous options
@@ -414,28 +414,28 @@
 			return api.filter(this.files, function (file){ return api.uid(file) == uid; })[0];
 		},
 
-		_getUploadEvent: function (extra){
-			var xhr = this.xhr, evt = {
+		_getUploadEvent: function (xhr, extra){
+			var evt = {
 				  xhr: xhr
-				, file: xhr.currentFile
-				, files: xhr.files
+				, file: this.xhr.currentFile
+				, files: this.xhr.files
 				, widget: this
 			};
 			return	_extend(evt, extra);
 		},
 
-		_emitUploadEvent: function (prefix){
-			var evt = this._getUploadEvent();
+		_emitUploadEvent: function (prefix, file, xhr){
+			var evt = this._getUploadEvent(xhr);
 			this.emit(prefix+'Upload', evt);
 		},
 
-		_emitProgressEvent: function (prefix, event){
-			var evt = this._getUploadEvent(event);
+		_emitProgressEvent: function (prefix, event, file, xhr){
+			var evt = this._getUploadEvent(xhr, event);
 			this.emit(prefix+'Progress', evt);
 		},
 
 		_emitCompleteEvent: function (prefix, err, xhr, file){
-			var evt = this._getUploadEvent({
+			var evt = this._getUploadEvent(xhr, {
 				  error: err
 				, status: xhr.status
 				, statusText: xhr.statusText
@@ -491,7 +491,7 @@
 				, deg	= this._rotate[uid]
 				, crop	= this._crop[uid]
 				, resize = this._resize[uid]
-				, evt = this._getUploadEvent()
+				, evt = this._getUploadEvent(this.xhr)
 			;
 
 			if( deg || crop ){
@@ -534,6 +534,8 @@
 				this.__fileId = uid;
 				this._$fileprogress = $progress = this.$elem('file.progress', $file);
 			}
+
+			console.log(uid, ui, $file);
 
 			if( type == 'progress' ){
 				$progress.stop().animate({ width: ui.loaded/ui.total*100 + '%' }, 300);
@@ -624,7 +626,7 @@
 
 
 			this.$elem('name').text( name.join(', ') );
-			this.$elem('size').text( size ? this._getFormatedSize(size) : '' );
+			this.$elem('size').text( !emptyQueue ? this._getFormatedSize(size) : '' );
 
 
 			this.$elem('empty.show').toggle( empty );
@@ -964,7 +966,7 @@
 							, mx = pw, my = ph
 							, rx = pw/coords.rw, ry = ph/coords.rh
 						;
-						
+
 						if( preview.keepAspectRatio ){
 							if (rx > 1 && ry > 1){ // image is smaller than preview (no scale)
 								rx = ry = 1;
@@ -1164,7 +1166,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.3.3';
+	$.fn.fileapi.version = '0.3.4';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
@@ -1213,7 +1215,7 @@
 			ret	= inst[options]();
 		}
 		else if( inst === false ){
-			api.log("[webcam.error] вoes not work.");
+			api.log("[webcam.error] does not work.");
 			ret = null;
 		}
 		else {
@@ -1321,6 +1323,8 @@
 									, ly: coords.y
 									, lw: coords.w
 									, lh: coords.h
+									, lx2: coords.x2
+									, ly2: coords.y2
 									, deg: deg
 									, flip: flip
 								});
