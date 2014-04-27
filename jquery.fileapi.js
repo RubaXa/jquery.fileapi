@@ -51,8 +51,13 @@
 			paramName: 0, // POST-parameter name
 			dataType: 'json',
 			duplicate: false, // ignore duplicate
+
+			uploadRetry: 0,
+			networkDownRetryTimeout: 5000,
+
 			chunkSize: 0, // or chunk size in bytes, eg: .5 * FileAPI.MB
 			chunkUploadRetry: 3, // number of retries during upload chunks (html5)
+			chunkNetworkDownRetryTimeout: 2000,
 
 			maxSize: 0, // max file size, 0 — unlimited
 			maxFiles: 0, // 0 unlimited
@@ -903,8 +908,13 @@
 						, data: _extend({}, this.serialize(), opts.data)
 						, headers: opts.headers
 						, files: files
-						, chunkSize: opts.chunkSize|0
-						, chunkUploadRetry: opts.chunkUploadRetry|0
+
+						, uploadRetry: 0
+						, networkDownRetryTimeout: 5000
+						, chunkSize: 0
+						, chunkUploadRetry: 3
+						, chunkNetworkDownRetryTimeout: 2000
+
 						, prepare: _bind(this, this._onFileUploadPrepare)
 						, imageOriginal: opts.imageOriginal
 						, imageTransform: opts.imageTransform
@@ -1167,7 +1177,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.3.4';
+	$.fn.fileapi.version = '0.4.0';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
