@@ -32,7 +32,7 @@
 	}
 
 	function init(els, options) {
-		var modalOptions = options;
+		var modalOptions = options, _this;
 
 		if(els.length) {
 			els.each(function(){
@@ -43,7 +43,7 @@
 			$.extend(defaults, modalOptions);
 		}
 
-		return {
+		return _this = {
 			open: function(options) {
 				var el = els.get(0);
 				var localOptions = $.extend({}, defaults, $(el).data(pluginNamespace+'.options'), options);
@@ -65,7 +65,7 @@
 				if(localOptions.closeOnEsc) {
 					$(document).bind('keyup.'+pluginNamespace, function(e){
 						if(e.keyCode === 27) {
-							$.modal().close();
+							_this.close();
 						}
 					});
 				}
@@ -75,7 +75,7 @@
 						e.stopPropagation();
 					});
 					$('.' + localOptions.overlayClass).on('click.' + pluginNamespace, function(e){
-						$.modal().close();
+						_this.close();
 					});
 				}
 
