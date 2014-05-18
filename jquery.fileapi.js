@@ -1048,11 +1048,20 @@
 		},
 
 		remove: function (file){
-			var uid = typeof file == 'object' ? api.uid(file) : file;
+			var uid = typeof file == 'object' ? api.uid(file) : file,
+				previewEl = this.option('elements.preview.el')
+			;
 
 			this.$file(uid).remove();
+
 			this.queue = api.filter(this.queue, function (file){ return api.uid(file) != uid; });
 			this.files = api.filter(this.files, function (file){ return api.uid(file) != uid; });
+
+			if (previewEl && !this.queue.length) {
+				this.$(previewEl).empty();
+			}
+
+
 			this._redraw();
 		},
 
