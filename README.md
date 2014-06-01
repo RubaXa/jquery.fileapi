@@ -211,6 +211,17 @@ $('...').fileapi({
 });
 ```
 
+### onBeforeUpload`:Function`(evt`:$.Event`, uiEvt`:Object`)
+Before start uploading.
+```js
+function (evt, uiEvt){
+	var files = uiEvt.files;
+	var widget = uiEvt.widget;
+	if (files.length > 1000) {
+	   return false; // prevent uploading
+	}
+}
+```
 
 ### onUpload`:Function`(evt`:$.Event`, uiEvt`:Object`)
 Start uploading.
@@ -433,6 +444,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+### 0.4.1
+ * #67: `resize` method
+ * #63: `remove` method
+ * - console.log
+ * `modal` close
+
+### 0.4.0
+* #57: + `onBeforeUpload` event
 * support `disabled` dom-attribute
 * #34: fixed `imageTransform`
 * + FileAPI v2.0.3

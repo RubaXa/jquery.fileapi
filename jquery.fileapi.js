@@ -51,8 +51,13 @@
 			paramName: 0, // POST-parameter name
 			dataType: 'json',
 			duplicate: false, // ignore duplicate
+
+			uploadRetry: 0,
+			networkDownRetryTimeout: 5000,
+
 			chunkSize: 0, // or chunk size in bytes, eg: .5 * FileAPI.MB
 			chunkUploadRetry: 3, // number of retries during upload chunks (html5)
+			chunkNetworkDownRetryTimeout: 2000,
 
 			maxSize: 0, // max file size, 0 — unlimited
 			maxFiles: 0, // 0 unlimited
@@ -130,6 +135,7 @@
 
 			onSelect: noop,
 
+			onBeforeUpload: noop,
 			onUpload: noop,
 			onProgress: noop,
 			onComplete: noop,
@@ -414,28 +420,28 @@
 			return api.filter(this.files, function (file){ return api.uid(file) == uid; })[0];
 		},
 
-		_getUploadEvent: function (extra){
-			var xhr = this.xhr, evt = {
+		_getUploadEvent: function (xhr, extra){
+			var evt = {
 				  xhr: xhr
-				, file: xhr.currentFile
-				, files: xhr.files
+				, file: this.xhr.currentFile
+				, files: this.xhr.files
 				, widget: this
 			};
 			return	_extend(evt, extra);
 		},
 
-		_emitUploadEvent: function (prefix){
-			var evt = this._getUploadEvent();
+		_emitUploadEvent: function (prefix, file, xhr){
+			var evt = this._getUploadEvent(xhr);
 			this.emit(prefix+'Upload', evt);
 		},
 
-		_emitProgressEvent: function (prefix, event){
-			var evt = this._getUploadEvent(event);
+		_emitProgressEvent: function (prefix, event, file, xhr){
+			var evt = this._getUploadEvent(xhr, event);
 			this.emit(prefix+'Progress', evt);
 		},
 
 		_emitCompleteEvent: function (prefix, err, xhr, file){
-			var evt = this._getUploadEvent({
+			var evt = this._getUploadEvent(xhr, {
 				  error: err
 				, status: xhr.status
 				, statusText: xhr.statusText
@@ -491,10 +497,10 @@
 				, deg	= this._rotate[uid]
 				, crop	= this._crop[uid]
 				, resize = this._resize[uid]
-				, evt = this._getUploadEvent()
+				, evt = this._getUploadEvent(this.xhr)
 			;
 
-			if( deg || crop ){
+			if( deg || crop || resize ){
 				var trans = $.extend(true, {}, opts.imageTransform || {});
 				deg = deg || (this.options.imageAutoOrientation ? 'auto' : void 0);
 
@@ -506,6 +512,8 @@
 				}
 				else {
 					_each(trans, function (opts){
+						_extend(opts, resize);
+
 						opts.crop	= crop;
 						opts.rotate	= deg;
 					});
@@ -592,7 +600,7 @@
 				var uid = api.uid(file);
 
 				name.push(file.name);
-				size += file.size;
+				size += file.complete ? 0 : file.size;
 
 				if( $files.length && !this.$file(uid).length ){
 					var
@@ -888,7 +896,7 @@
 		},
 
 		upload: function (){
-			if( !this.active ){
+			if( !this.active && this.emit('beforeUpload', { widget: this, files: this.queue }) ){
 				this.active = true;
 
 				var
@@ -900,8 +908,13 @@
 						, data: _extend({}, this.serialize(), opts.data)
 						, headers: opts.headers
 						, files: files
-						, chunkSize: opts.chunkSize|0
-						, chunkUploadRetry: opts.chunkUploadRetry|0
+
+						, uploadRetry: 0
+						, networkDownRetryTimeout: 5000
+						, chunkSize: 0
+						, chunkUploadRetry: 3
+						, chunkNetworkDownRetryTimeout: 2000
+
 						, prepare: _bind(this, this._onFileUploadPrepare)
 						, imageOriginal: opts.imageOriginal
 						, imageTransform: opts.imageTransform
@@ -1014,7 +1027,7 @@
 
 		rotate: function (file, deg){
 			var
-				  uid = typeof file == 'object' ? api.uid(file) : file
+				  uid = $.type(file) == 'string' ? file : api.uid(file)
 				, opts = this.options
 				, preview = opts.multiple ? this.option('elements.file.preview') : opts.elements.preview
 				, $el = (opts.multiple ? this.$file(uid) : this.$el).find(preview && preview.el)
@@ -1022,10 +1035,12 @@
 			;
 
 			if( /([+-])=/.test(deg) ){
-				deg = _rotate[uid] = (_rotate[uid] || 0) + (RegExp.$1 == '+' ? 1 : -1) * deg.substr(2);
+				_rotate[uid] = deg = (_rotate[uid] || 0) + (RegExp.$1 == '+' ? 1 : -1) * deg.substr(2);
 			} else {
 				_rotate[uid] = deg;
 			}
+
+			this._getFile(uid).rotate = deg;
 
 			$el.css({
 				  '-webkit-transform': 'rotate('+deg+'deg)'
@@ -1035,11 +1050,20 @@
 		},
 
 		remove: function (file){
-			var uid = typeof file == 'object' ? api.uid(file) : file;
+			var uid = typeof file == 'object' ? api.uid(file) : file,
+				previewEl = this.option('elements.preview.el')
+			;
 
 			this.$file(uid).remove();
+
 			this.queue = api.filter(this.queue, function (file){ return api.uid(file) != uid; });
 			this.files = api.filter(this.files, function (file){ return api.uid(file) != uid; });
+
+			if (previewEl && !this.queue.length) {
+				this.$(previewEl).empty();
+			}
+
+
 			this._redraw();
 		},
 
@@ -1162,7 +1186,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.3.3';
+	$.fn.fileapi.version = '0.4.1';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
@@ -1211,7 +1235,7 @@
 			ret	= inst[options]();
 		}
 		else if( inst === false ){
-			api.log("[webcam.error] вoes not work.");
+			api.log("[webcam.error] does not work.");
 			ret = null;
 		}
 		else {
@@ -1248,7 +1272,11 @@
 			}
 
 			api.getInfo(file, function (err, info){
-				var Image = api.Image(file), maxSize = opts.maxSize;
+				var
+					  Image = api.Image(file)
+					, maxSize = opts.maxSize
+					, deg = file.rotate
+				;
 
 				if( maxSize ){
 					Image.resize(
@@ -1258,7 +1286,7 @@
 					);
 				}
 
-				Image.rotate('auto').get(function (err, img){
+				Image.rotate(deg === void 0 ? 'auto' : deg).get(function (err, img){
 					var
 						  selection = opts.selection
 						, minSide = Math.min(img.width, img.height)
