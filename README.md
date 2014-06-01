@@ -445,6 +445,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Changelog
 ### 0.4.1
+ * #67: `resize` method
  * #63: `remove` method
  * - console.log
  * `modal` close

@@ -500,7 +500,7 @@
 				, evt = this._getUploadEvent(this.xhr)
 			;
 
-			if( deg || crop ){
+			if( deg || crop || resize ){
 				var trans = $.extend(true, {}, opts.imageTransform || {});
 				deg = deg || (this.options.imageAutoOrientation ? 'auto' : void 0);
 
@@ -512,6 +512,8 @@
 				}
 				else {
 					_each(trans, function (opts){
+						_extend(opts, resize);
+
 						opts.crop	= crop;
 						opts.rotate	= deg;
 					});
