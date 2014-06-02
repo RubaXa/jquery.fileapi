@@ -590,10 +590,15 @@
 				, $files = this.$files
 				, offset = $files.children().length
 				, preview = this.option('elements.file.preview')
+				, previewEl = this.option('elements.preview.el')
 			;
 
 			if( clear ){
 				this.$files.empty();
+			}
+
+			if (previewEl && !this.queue.length) {
+				this.$(previewEl).empty();
 			}
 
 			_each(files, function (file, i){
@@ -1050,19 +1055,12 @@
 		},
 
 		remove: function (file){
-			var uid = typeof file == 'object' ? api.uid(file) : file,
-				previewEl = this.option('elements.preview.el')
-			;
+			var uid = typeof file == 'object' ? api.uid(file) : file;
 
 			this.$file(uid).remove();
 
 			this.queue = api.filter(this.queue, function (file){ return api.uid(file) != uid; });
 			this.files = api.filter(this.files, function (file){ return api.uid(file) != uid; });
-
-			if (previewEl && !this.queue.length) {
-				this.$(previewEl).empty();
-			}
-
 
 			this._redraw();
 		},
