@@ -116,7 +116,10 @@
 							onSelect: function (evt, ui){
 								var file = ui.files[0];
 
-								if( file ){
+								if( !FileAPI.support.transform ) {
+									alert('Your browser does not support Flash :(');
+								}
+								else if( file ){
 									$('#popup').modal({
 										closeOnEsc: true,
 										closeOnOverlayClick: false,
