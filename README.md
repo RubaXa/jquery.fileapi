@@ -444,6 +444,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+### 0.4.2
+ * #73: git -> gif (fixed typo)
+
 ### 0.4.1
  * #67: `resize` method
  * #63: `remove` method

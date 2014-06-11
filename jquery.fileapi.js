@@ -217,7 +217,7 @@
 						  src: file
 						, name: file.split('/').pop()
 						// @todo: use FileAPI.getMimeType (v2.1+)
-						, type: /jpe?g|png|bmp|git|tiff?/i.test(file) && 'image/'+file.split('.').pop()
+						, type: /jpe?g|png|bmp|gif|tiff?/i.test(file) && 'image/'+file.split('.').pop()
 						, size: 0
 					};
 				}
@@ -1184,7 +1184,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.4.1';
+	$.fn.fileapi.version = '0.4.2';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
