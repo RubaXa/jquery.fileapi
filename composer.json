@@ -1,0 +1,5 @@
+{
+    "name": "singrana/fileapi",
+    "description": "jQuery.FileAPI — jquery plugin for FileAPI (multiupload, image upload, crop, resize and etc.) http://rubaxa.github.io/jquery.fileapi/",
+    "license": "MIT",
+}
