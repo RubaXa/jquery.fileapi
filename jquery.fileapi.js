@@ -322,9 +322,9 @@
 				size /= api[postfix = 'KB'];
 			}
 
-			return	opts.sizeFormat.replace(/^\d+([^\d]+)(\d*)/, function (_, separator, fix){
-				size = size.toFixed(fix.length);
-				return	(size + '').replace('.', separator) +' '+ opts.lang[postfix];
+			return opts.sizeFormat.replace(/^\d+([^\d]+)(\d*)/, function (_, separator, fix){
+				size = (parseFloat(size) || 0).toFixed(fix.length);
+				return (size + '').replace('.', separator) +' '+ opts.lang[postfix];
 			});
 		},
 
