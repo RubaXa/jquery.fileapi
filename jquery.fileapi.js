@@ -914,11 +914,11 @@
 						, headers: opts.headers
 						, files: files
 
-						, uploadRetry: 0
-						, networkDownRetryTimeout: 5000
-						, chunkSize: 0
-						, chunkUploadRetry: 3
-						, chunkNetworkDownRetryTimeout: 2000
+						, uploadRetry: opts.uploadRetry
+						, networkDownRetryTimeout: opts.networkDownRetryTimeout
+						, chunkSize: opts.chunkSize
+						, chunkUploadRetry: opts.chunkUploadRetry
+						, chunkNetworkDownRetryTimeout: opts.chunkNetworkDownRetryTimeout
 
 						, prepare: _bind(this, this._onFileUploadPrepare)
 						, imageOriginal: opts.imageOriginal
