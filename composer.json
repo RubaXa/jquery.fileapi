@@ -1,5 +1,9 @@
 {
-    "name": "singrana/fileapi",
-    "description": "jQuery.FileAPI — jquery plugin for FileAPI (multiupload, image upload, crop, resize and etc.) http://rubaxa.github.io/jquery.fileapi/",
-    "license": "MIT"
+    "name": "rubaxa/fileapi",
+    "description": "jQuery plugin for FileAPI (multiupload, image upload, crop, resize and etc.)",
+    "license": "MIT",
+    "version": "0.4.2",
+    "author": "Konstantin Lebedev <ibnRubaXa@gmail.com>",
+    "keywords": ["jquery","fileapi", "multiupload"],
+    "homepage": "https://github.com/RubaXa/jquery.fileapi",
 }
