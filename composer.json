@@ -5,5 +5,5 @@
     "version": "0.4.2",
     "author": "Konstantin Lebedev <ibnRubaXa@gmail.com>",
     "keywords": ["jquery","fileapi", "multiupload"],
-    "homepage": "https://github.com/RubaXa/jquery.fileapi",
+    "homepage": "https://github.com/RubaXa/jquery.fileapi"
 }
