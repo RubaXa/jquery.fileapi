@@ -452,7 +452,7 @@
 				file.complete = true;
 			}
 
-			if( !err && (this.options.dataType == 'json') ){
+			if( this.options.dataType == 'json' ){
 				try {
 					evt.result = $.parseJSON(evt.result);
 				} catch (err){
