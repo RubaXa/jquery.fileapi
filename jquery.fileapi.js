@@ -748,7 +748,7 @@
 					files.sort(sortFn);
 				}
 
-				if( preview && preview.el ){
+				if( preview && !$.isPlainObject(preview.el) ){
 					_each(files, function (file){
 						this._makeFilePreview(api.uid(file), file, preview, true);
 					}, this);
