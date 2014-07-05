@@ -391,7 +391,7 @@
 
 		_onReset: function (evt){
 			evt.preventDefault();
-			this.clear();
+			this.clear(true);
 		},
 
 		_onAbort: function (evt){
@@ -597,7 +597,7 @@
 				this.$files.empty();
 			}
 
-			if (previewEl && !this.queue.length) {
+			if( clear && previewEl && !this.queue.length ) {
 				this.$(previewEl).empty();
 			}
 
@@ -1065,7 +1065,7 @@
 			this._redraw();
 		},
 
-		clear: function (){
+		clear: function (all) {
 			this._crop		= {};
 			this._resize	= {};
 			this._rotate	= {}; // rotate deg
@@ -1074,8 +1074,7 @@
 			this.files		= []; // all files
 			this.uploaded	= []; // uploaded files
 
-			this.$files.empty();
-			this._redraw();
+			this._redraw(all === void 0 ? true : all);
 		},
 
 		dequeue: function (){
