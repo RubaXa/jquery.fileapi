@@ -322,9 +322,9 @@
 				size /= api[postfix = 'KB'];
 			}
 
-			return	opts.sizeFormat.replace(/^\d+([^\d]+)(\d*)/, function (_, separator, fix){
-				size = size.toFixed(fix.length);
-				return	(size + '').replace('.', separator) +' '+ opts.lang[postfix];
+			return opts.sizeFormat.replace(/^\d+([^\d]+)(\d*)/, function (_, separator, fix){
+				size = (parseFloat(size) || 0).toFixed(fix.length);
+				return (size + '').replace('.', separator) +' '+ opts.lang[postfix];
 			});
 		},
 
@@ -391,7 +391,7 @@
 
 		_onReset: function (evt){
 			evt.preventDefault();
-			this.clear();
+			this.clear(true);
 		},
 
 		_onAbort: function (evt){
@@ -452,7 +452,7 @@
 				file.complete = true;
 			}
 
-			if( !err && (this.options.dataType == 'json') ){
+			if( this.options.dataType == 'json' ){
 				try {
 					evt.result = $.parseJSON(evt.result);
 				} catch (err){
@@ -597,7 +597,7 @@
 				this.$files.empty();
 			}
 
-			if (previewEl && !this.queue.length) {
+			if( clear && previewEl && !this.queue.length ) {
 				this.$(previewEl).empty();
 			}
 
@@ -748,7 +748,7 @@
 					files.sort(sortFn);
 				}
 
-				if( preview && preview.el ){
+				if( preview && !$.isPlainObject(preview.el) ){
 					_each(files, function (file){
 						this._makeFilePreview(api.uid(file), file, preview, true);
 					}, this);
@@ -914,11 +914,11 @@
 						, headers: opts.headers
 						, files: files
 
-						, uploadRetry: 0
-						, networkDownRetryTimeout: 5000
-						, chunkSize: 0
-						, chunkUploadRetry: 3
-						, chunkNetworkDownRetryTimeout: 2000
+						, uploadRetry: opts.uploadRetry
+						, networkDownRetryTimeout: opts.networkDownRetryTimeout
+						, chunkSize: opts.chunkSize
+						, chunkUploadRetry: opts.chunkUploadRetry
+						, chunkNetworkDownRetryTimeout: opts.chunkNetworkDownRetryTimeout
 
 						, prepare: _bind(this, this._onFileUploadPrepare)
 						, imageOriginal: opts.imageOriginal
@@ -1065,7 +1065,7 @@
 			this._redraw();
 		},
 
-		clear: function (){
+		clear: function (all) {
 			this._crop		= {};
 			this._resize	= {};
 			this._rotate	= {}; // rotate deg
@@ -1074,8 +1074,7 @@
 			this.files		= []; // all files
 			this.uploaded	= []; // uploaded files
 
-			this.$files.empty();
-			this._redraw();
+			this._redraw(all === void 0 ? true : all);
 		},
 
 		dequeue: function (){
