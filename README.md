@@ -470,6 +470,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+### 0.4.3
+ * #84: fixed modal.js
+ * #82: clear(all: true)
+ * #61: always parse result (dataType === 'json')
+
 ### 0.4.2
  * #73: git -> gif (fixed typo)
 

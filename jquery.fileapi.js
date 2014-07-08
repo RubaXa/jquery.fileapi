@@ -1183,7 +1183,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.4.2';
+	$.fn.fileapi.version = '0.4.3';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
