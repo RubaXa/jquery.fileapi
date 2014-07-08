@@ -71,11 +71,10 @@
 				}
 
 				if(localOptions.closeOnOverlayClick) {
-					overlay.children().on('click.' + pluginNamespace, function(e){
-						e.stopPropagation();
-					});
 					$('.' + localOptions.overlayClass).on('click.' + pluginNamespace, function(e){
-						_this.close();
+						if (e.target === this) {
+							_this.close();
+						}
 					});
 				}
 
