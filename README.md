@@ -470,6 +470,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
+
+### 0.4.4
+ * #90: fixed rotate + imageAutoOrientation
+
 ### 0.4.3
  * #84: fixed modal.js
  * #82: clear(all: true)
