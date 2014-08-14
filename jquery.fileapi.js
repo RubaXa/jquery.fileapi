@@ -589,16 +589,16 @@
 				, size = 0
 				, $files = this.$files
 				, offset = $files.children().length
-				, preview = this.option('elements.file.preview')
-				, previewEl = this.option('elements.preview.el')
+				, preview = this.option('elements.preview')
+				, filePreview = this.option('elements.file.preview')
 			;
 
 			if( clear ){
 				this.$files.empty();
 			}
 
-			if( clear && previewEl && !this.queue.length ) {
-				this.$(previewEl).empty();
+			if( clear && preview && preview.el && !this.queue.length ) {
+				this.$(preview.el).empty();
 			}
 
 			_each(files, function (file, i){
@@ -629,9 +629,11 @@
 						this.$elem('file.complete.hide', $file).hide();
 					}
 
-					if( preview.el ){
-						this._makeFilePreview(uid, file, preview);
+					if( filePreview.el ){
+						this._makeFilePreview(uid, file, filePreview);
 					}
+				} else if( preview && preview.el ){
+					this._makeFilePreview(uid, file, preview, true);
 				}
 			}, this);
 
@@ -741,17 +743,10 @@
 				var
 					  opts = this.options
 					, sortFn = opts.sortFn
-					, preview = opts.elements.preview
 				;
 
 				if( sortFn ){
 					files.sort(sortFn);
-				}
-
-				if( preview && !$.isPlainObject(preview.el) ){
-					_each(files, function (file){
-						this._makeFilePreview(api.uid(file), file, preview, true);
-					}, this);
 				}
 
 				if( this.xhr ){

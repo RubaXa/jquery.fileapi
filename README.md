@@ -472,6 +472,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ## Changelog
 
 ### 0.4.4
+ * #93: `files` option and userpic
  * #90: fixed rotate + imageAutoOrientation
 
 ### 0.4.3

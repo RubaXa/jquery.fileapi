@@ -40,9 +40,40 @@ module('jQuery.FileAPI');
 	}
 
 
-	test('files options', function (){
+
+	asyncTest('files.multiple:false', function (){
+		var $el = $('#userpic');
+
 		$el.fileapi('destroy').fileapi({
 			url: serverUrl,
+			multiple: false,
+			elements: {
+				preview: {
+					el: '.js-preview',
+					width: 200,
+					height: 200
+				}
+			},
+			files: [{
+				src: './files/dino.png',
+				type: 'image/png',
+				name: 'dino.png',
+				size: 315
+			}]
+		});
+
+		setTimeout(function () {
+			equal($el.find('.js-preview canvas').width(), 200, 'width');
+			equal($el.find('.js-preview canvas').height(), 200, 'height');
+			start();
+		}, 500);
+	});
+
+
+	test('files.multiple:true', function (){
+		$el.fileapi('destroy').fileapi({
+			url: serverUrl,
+			multiple: true,
 			elements: {
 				ctrl: { upload: '#uploadBtn' },
 				file: {
@@ -53,11 +84,11 @@ module('jQuery.FileAPI');
 					}
 				}
 			},
-			files:  ['./files/image.jpg', {
-				src:	'./files/dino.png',
-				type:	'image/png',
-				name:	'dino.png',
-				size:	315
+			files: ['./files/image.jpg', {
+				src: './files/dino.png',
+				type: 'image/png',
+				name: 'dino.png',
+				size: 315
 			}]
 		});
 
