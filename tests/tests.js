@@ -56,9 +56,7 @@ module('jQuery.FileAPI');
 			},
 			files: [{
 				src: './files/dino.png',
-				type: 'image/png',
-				name: 'dino.png',
-				size: 315
+				name: 'dino.png'
 			}]
 		});
 

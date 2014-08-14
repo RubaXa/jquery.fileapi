@@ -213,15 +213,13 @@
 		if( $.isArray(options.files) ){
 			this.files = $.map(options.files, function (file){
 				if( $.type(file) === 'string' ){
-					file = {
-						  src: file
-						, name: file.split('/').pop()
-						// @todo: use FileAPI.getMimeType (v2.1+)
-						, type: /jpe?g|png|bmp|gif|tiff?/i.test(file) && 'image/'+file.split('.').pop()
-						, size: 0
-					};
+					file = { src: file, size: 0 };
 				}
+
+				file.name = file.name || file.src.split('/').pop();
+				file.type = file.type || /\.(jpe?g|png|bmp|gif|tiff?)/i.test(file.src) && 'image/' + file.src.split('.').pop(); // @todo: use FileAPI.getMimeType (v2.1+)
 				file.complete = true;
+
 				return file;
 			});
 
@@ -607,7 +605,10 @@
 				name.push(file.name);
 				size += file.complete ? 0 : file.size;
 
-				if( $files.length && !this.$file(uid).length ){
+				if( preview && preview.el ){
+					this._makeFilePreview(uid, file, preview, true);
+				}
+				else if( $files.length && !this.$file(uid).length ){
 					var
 						html = this.itemTplFn({
 							  $idx: offset + i
@@ -632,8 +633,6 @@
 					if( filePreview.el ){
 						this._makeFilePreview(uid, file, filePreview);
 					}
-				} else if( preview && preview.el ){
-					this._makeFilePreview(uid, file, preview, true);
 				}
 			}, this);
 
