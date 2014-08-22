@@ -577,7 +577,7 @@
 			}
 		},
 
-		_redraw: function (clear/**Boolean*/){
+		_redraw: function (clearFiles/**Boolean*/, clearPreview/**Boolean*/){
 			var
 				  files = this.files
 				, active = !!this.active
@@ -591,11 +591,11 @@
 				, filePreview = this.option('elements.file.preview')
 			;
 
-			if( clear ){
+			if( clearFiles ){
 				this.$files.empty();
 			}
 
-			if( clear && preview && preview.el && !this.queue.length ) {
+			if( clearPreview && preview && preview.el && !this.queue.length ) {
 				this.$(preview.el).empty();
 			}
 
@@ -1083,7 +1083,8 @@
 			this.files		= []; // all files
 			this.uploaded	= []; // uploaded files
 
-			this._redraw(all === void 0 ? true : all);
+			all = all === void 0 ? true : all;
+			this._redraw(all, all);
 		},
 
 		dequeue: function (){
@@ -1197,7 +1198,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.4.4';
+	$.fn.fileapi.version = '0.4.5';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
