@@ -1038,7 +1038,7 @@
 
 			api.getInfo(file, function (err, info) {
 				var orientation = info && info.exif && info.exif.Orientation,
-					startDeg = opts.imageAutoOrientation && api.Image.exifOrientation[orientation];
+					startDeg = opts.imageAutoOrientation && api.Image.exifOrientation[orientation] || 0;
 
 				if (_rotate[uid] == null) {
 					_rotate[uid] = startDeg || 0;
