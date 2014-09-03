@@ -357,7 +357,7 @@ $('#userpic').fileapi({
 $('#upload').fileapi({
 	multiple: true,
 
-	// Restores the list of files uploaded earlier.
+	// Restores the list of files uploaded earlier *** IE < 9 — NOT SUPPORTED ***
 	files: [{
 		src: "http://path/to/filename.png",
 		type: "image/png",
