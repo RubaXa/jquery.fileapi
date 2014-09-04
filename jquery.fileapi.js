@@ -616,6 +616,7 @@
 							, name: file.name
 							, type: file.type
 							, size: file.size
+							, complete: !!file.complete
 							, sizeText: this._getFormatedSize(file.size)
 						})
 
