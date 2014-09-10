@@ -471,6 +471,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Changelog
 
+ * #100: fixed `maxSize` option
+
 ### 0.4.5
  * #95: fixed `rotate` method
  * #94: fixed `redraw` method

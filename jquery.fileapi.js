@@ -1131,8 +1131,8 @@
 
 	function _checkFileByCriteria(file, name, imageSize, info){
 		if( imageSize && info ){
-			var excepted = imageSize[name],
-				actual = info[name.substr(3).toLowerCase()],
+			var excepted = imageSize > 0 ? imageSize : imageSize[name],
+				actual = info > 0 ? info : info[name.substr(3).toLowerCase()],
 				val = (excepted - actual),
 				isMax = /max/.test(name)
 			;
