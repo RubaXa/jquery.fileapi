@@ -554,7 +554,7 @@
 					if( type == 'upload' ){
 						$remove.hide();
 						$progress.width(0);
-					} else if( opts.onRemoveCompleted ){
+					} else if( opts.onFileRemoveCompleted ){
 						$remove.show();
 					}
 

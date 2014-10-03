@@ -470,7 +470,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ## Changelog
-
+ * FileAPI up to 2.0.7
+ * #12: `onRemoveCompleted` -> `onFileRemoveCompleted`
  * #100: fixed `maxSize` option
 
 ### 0.4.5
