@@ -116,6 +116,21 @@ Sort function of selected files.
 Filter function of selected files, eg: `function (file, info){ return /^image/.test(file.type) && info.width > 320 }`.
 
 
+### imageTransform`:Object`
+Rules of changes the original image on the client (see [details](https://github.com/mailru/FileAPI#imagetransformobject)).
+```js
+imageTransform: {
+	// resize by max side
+	maxWidth: 800,
+	maxHeight: 600
+}
+```
+
+
+### imageOriginal`:Boolean`
+Sent to the server the original image or not, if defined imageTransform option.
+
+
 ### elements`:Object`
 ```js
 // Default options
