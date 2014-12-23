@@ -376,7 +376,7 @@ $('#upload').fileapi({
 	files: [{
 		src: "http://path/to/filename.png",
 		type: "image/png",
-		name: "filename.png"
+		name: "filename.png",
 		size: 31409,
 		data: { id: 999, token: "..." }
 	}],
