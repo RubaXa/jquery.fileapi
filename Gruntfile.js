@@ -68,6 +68,9 @@ module.exports = function (grunt){
 	// "npm test" runs these tasks
 	grunt.registerTask('test', ['jshint', 'qunit']);
 
+
+	grunt.registerTask('build', ['version', 'uglify']);
+
 	// Default task.
-	grunt.registerTask('default', ['test', 'version', 'uglify']);
+	grunt.registerTask('default', ['test', 'build']);
 };

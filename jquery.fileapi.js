@@ -866,9 +866,12 @@
 			switch( name ){
 				case 'accept':
 				case 'multiple':
-				case 'paramName':
-						if( name == 'paramName' ){ name = 'name'; }
 						this.$(':file')[nVal ? propFn : removePropFn](name, nVal);
+					break;
+
+
+				case 'paramName':
+						nVal && this.$(':file')[propFn]('name', nVal);
 					break;
 			}
 		},
@@ -1201,7 +1204,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.4.8';
+	$.fn.fileapi.version = '0.4.9';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
