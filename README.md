@@ -214,11 +214,11 @@ $('...').fileapi({
 			// errors
 			var errors = data.other[0].errors;
 			if( errors ){
-				errors.maxSize;
-				errors.maxFiles;
-				errors.minWidth;
+				errors.maxSize; // File size exceeds the maximum size `@see maxSize`
+				errors.maxFiles; // Number of files selected exceeds the maximum `@see maxFiles`
+				errors.minWidth; // Width of the image is smaller than the specified `@see imageSize`
 				errors.minHeight;
-				errors.maxWidth;
+				errors.maxWidth; // Width of the image greater than the specified `@see imageSize`
 				errors.maxHeight;
 			}
 		}
