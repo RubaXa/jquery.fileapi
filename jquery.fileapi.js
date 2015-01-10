@@ -1174,37 +1174,42 @@
 	 * @param	{String}	[value]
 	 */
 	$.fn.fileapi = function (options, value){
-		var plugin = this.data('fileapi');
+		var $el,
+			method,
+			plugin,
+			retVal;
 
-		if( plugin ){
-			if( options === 'widget' ){
-				return	plugin;
+		this.each(function () {
+			$el = $(this);
+			plugin = $el.data('fileapi');
+
+			if( plugin ){
+				if( options === 'widget' ){
+					retVal = plugin;
+				}
+				else if( typeof options == 'string' ){
+					method = plugin[options];
+
+					if( $.isFunction(method) ){
+						retVal = method.apply(plugin, _slice.call(arguments, 1));
+					}
+					else if( method === void 0 ){
+						retVal = plugin.option(options, value);
+					}
+					else if( options === 'files' ){
+						retVal = method;
+					}
+				}
+			} else if( options == null || typeof options == 'object' ){
+				$el.data('fileapi', new Plugin($el, options));
 			}
+		});
 
-			if( typeof options == 'string' ){
-				var fn = plugin[options], res;
-
-				if( $.isFunction(fn) ){
-					res = fn.apply(plugin, _slice.call(arguments, 1));
-				}
-				else if( fn === void 0 ){
-					res = plugin.option(options, value);
-				}
-				else if( options === 'files' ){
-					res = fn;
-				}
-
-				return	res === void 0 ? this : res;
-			}
-		} else if( options == null || typeof options == 'object' ){
-			this.data('fileapi', new Plugin(this, options));
-		}
-
-		return	this;
+		return retVal === void 0 ? this : retVal;
 	};
 
 
-	$.fn.fileapi.version = '0.4.9';
+	$.fn.fileapi.version = '0.4.10';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";

@@ -1,7 +1,7 @@
 {
   "name": "jquery.fileapi",
   "main": "jquery.fileapi.js",
-  "version": "0.4.9",
+  "version": "0.4.10",
   "homepage": "http://rubaxa.github.io/jquery.fileapi/",
   "authors": [
     "RubaXa <ibnRubaXa@gmail.com>"
