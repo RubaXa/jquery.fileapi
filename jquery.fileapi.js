@@ -914,6 +914,7 @@
 						, headers: opts.headers
 						, files: files
 
+						, cache: opts.cache
 						, uploadRetry: opts.uploadRetry
 						, networkDownRetryTimeout: opts.networkDownRetryTimeout
 						, chunkSize: opts.chunkSize
