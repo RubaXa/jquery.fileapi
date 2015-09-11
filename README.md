@@ -1,3 +1,14 @@
+### WARNIGN: This plugin is not maintained
+If you have a desire to continue to develop and support, email me, with pleasure I will give access to the repository.
+
+---
+
+### ВНИМАНИЕ: Этот плагин больше не поддерживается
+Если у вас есть желание продолжить разработку и поддержку, напишите мне, с удовольствием предоставлю весь необходимый доступ.
+
+---
+
+
 # $.fn.fileapi
 jQuery plugin for [FileAPI](https://github.com/mailru/FileAPI/) (multiupload, image upload, crop, resize and etc.)
 
@@ -214,11 +225,11 @@ $('...').fileapi({
 			// errors
 			var errors = data.other[0].errors;
 			if( errors ){
-				errors.maxSize;
-				errors.maxFiles;
-				errors.minWidth;
+				errors.maxSize; // File size exceeds the maximum size `@see maxSize`
+				errors.maxFiles; // Number of files selected exceeds the maximum `@see maxFiles`
+				errors.minWidth; // Width of the image is smaller than the specified `@see imageSize`
 				errors.minHeight;
-				errors.maxWidth;
+				errors.maxWidth; // Width of the image greater than the specified `@see imageSize`
 				errors.maxHeight;
 			}
 		}
