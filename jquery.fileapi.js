@@ -1204,7 +1204,7 @@
 	};
 
 
-	$.fn.fileapi.version = '0.4.9';
+	$.fn.fileapi.version = '0.4.11';
 	$.fn.fileapi.tpl = function (text){
 		var index = 0;
 		var source = "__b+='";
