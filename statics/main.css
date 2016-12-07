@@ -258,17 +258,10 @@ h2 {
 		font-size: 16px;
 	}
 
-	.btn input {
-	 	top: -10px;
-		right: -40px;
-		z-index: 2;
-		position: absolute;
-		cursor: pointer;
-		opacity: 0;
-		filter: alpha(opacity=0);
-		font-size: 50px;
-		cursor: pointer;
-	}
+    .btn input[type=file] {
+        position: fixed;
+        top: -1000px;
+    }
 
 	.btn-txt {
 		position: relative;

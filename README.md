@@ -442,26 +442,24 @@ $('#upload').fileapi({
 
 ## Using with Bootstrap
 
-You can use this uploader with Bootstrap framework without writing much additional CSS. Just add the following CSS to your page to hide the browser's "browse" button:
+You can use this uploader with Bootstrap framework without writing much additional CSS.
+Just hide input tag and use label to click.
 
 ```css
-#id-of-uploader .btn {
-	cursor: pointer;
-	display: inline-block;
-	position: relative;
-	overflow: hidden;
+#simple-btn .btn input {
+    position: fixed;
+    top: -1000px;
 }
-
-#id-of-uploader .btn input {
-	top: -10px;
-	right: -40px;
-	z-index: 2;
-	position: absolute;
-	cursor: pointer;
-	opacity: 0;
-	filter: alpha(opacity=0);
-	font-size: 50px;
-}
+```
+```html
+<div id="simple-btn" class="btn btn-success js-fileapi-wrapper">
+    <div class="js-browse">
+        <label for="filedata">
+            <span class="btn-txt">Browse</span>
+            <input type="file" name="filedata" id="filedata" />
+        </label>
+    </div>
+</div>
 ```
 
 
