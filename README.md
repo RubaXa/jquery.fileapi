@@ -1,4 +1,4 @@
-### WARNIGN: This plugin is not maintained
+### WARNING: This plugin is not maintained
 If you have a desire to continue to develop and support, email me, with pleasure I will give access to the repository.
 
 ---
